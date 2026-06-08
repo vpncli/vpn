@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.deb
+*.log
+.DS_Store
+.idea/
+
+# docs/ holds the APT repo served by GitHub Pages — its dists/ & pool/ MUST be
+# committed. Only reprepro's internal db is transient.
+docs/db/

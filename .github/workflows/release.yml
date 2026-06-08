@@ -1,0 +1,127 @@
+name: release
+
+# Tag a release to build binaries, .deb packages, and refresh the APT repo.
+#   git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # `secrets` can't be used in `if:` — map it to an env var here and check that.
+    env:
+      HAS_GPG: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bunx tsc --noEmit
+
+      - name: Cross-compile all targets
+        run: bun run build
+
+      - name: Compute checksums
+        id: sums
+        run: |
+          cd dist
+          for f in vpn-*; do
+            sha=$(sha256sum "$f" | awk '{print $1}')
+            echo "$f: $sha"
+            echo "${f//-/_}=$sha" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Build .deb packages
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sudo apt-get update && sudo apt-get install -y dpkg-dev reprepro
+          bash scripts/build-deb.sh "$VERSION" amd64
+          bash scripts/build-deb.sh "$VERSION" arm64
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/vpn-darwin-arm64
+            dist/vpn-darwin-x64
+            dist/vpn-linux-x64
+            dist/vpn-linux-arm64
+            dist/*.deb
+
+      # --- APT repository on GitHub Pages -----------------------------------
+      # Requires repo secrets: GPG_PRIVATE_KEY (ascii-armored), GPG_KEY (key id/email).
+      - name: Import GPG key
+        if: env.HAS_GPG == 'true'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: |
+          export GNUPGHOME="$HOME/.gnupg"
+          mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
+          # Sign non-interactively (no TTY in CI): loopback pinentry, no tty prompts.
+          printf 'allow-loopback-pinentry\n' > "$GNUPGHOME/gpg-agent.conf"
+          printf 'pinentry-mode loopback\nno-tty\n' > "$GNUPGHOME/gpg.conf"
+          gpgconf --kill gpg-agent || true
+
+          # Import via a file (robust against shell quoting of the multi-line key).
+          printf '%s\n' "$GPG_PRIVATE_KEY" > key.asc
+          if ! head -1 key.asc | grep -q 'BEGIN PGP PRIVATE KEY BLOCK'; then
+            echo "::error::GPG_PRIVATE_KEY is not an armored PRIVATE key block."
+            echo "It must start with '-----BEGIN PGP PRIVATE KEY BLOCK-----'."
+            echo "Re-export with: gpg --armor --export-secret-keys <key> | pbcopy"
+            exit 1
+          fi
+          gpg --batch --import key.asc
+          rm -f key.asc
+
+          echo "Imported secret keys:"
+          gpg --batch --list-secret-keys --keyid-format=long
+          if ! gpg --batch --list-secret-keys "$GPG_KEY" >/dev/null 2>&1; then
+            echo "::error::GPG_KEY ('set me to the key's email or fingerprint') does not match any imported key."
+            exit 1
+          fi
+          echo "test" | gpg --batch --yes --local-user "$GPG_KEY" --clearsign > /dev/null \
+            && echo "✔ signing works" || { echo "::error::signing failed — is the key passphrase-protected?"; exit 1; }
+
+      - name: Update APT repo
+        if: env.HAS_GPG == 'true'
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: bash scripts/publish-apt.sh dist/*.deb
+
+      - name: Commit APT repo
+        if: env.HAS_GPG == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git commit -m "apt: publish ${GITHUB_REF_NAME}" || echo "nothing to commit"
+          git push origin HEAD:main || echo "push skipped"
+
+      # --- Homebrew tap ------------------------------------------------------
+      # Patches the formula's sha256 placeholders. To auto-push to the tap repo,
+      # add a step that clones vpncli/homebrew-tap with a PAT and copies Formula/vpn.rb.
+      - name: Patch formula checksums
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^  version .*/  version \"$VERSION\"/" Formula/vpn.rb
+          sed -i "s/REPLACE_DARWIN_ARM64/${{ steps.sums.outputs.vpn_darwin_arm64 }}/" Formula/vpn.rb
+          sed -i "s/REPLACE_DARWIN_X64/${{ steps.sums.outputs.vpn_darwin_x64 }}/" Formula/vpn.rb
+          sed -i "s/REPLACE_LINUX_ARM64/${{ steps.sums.outputs.vpn_linux_arm64 }}/" Formula/vpn.rb
+          sed -i "s/REPLACE_LINUX_X64/${{ steps.sums.outputs.vpn_linux_x64 }}/" Formula/vpn.rb
+
+      - name: Upload patched formula
+        uses: actions/upload-artifact@v4
+        with:
+          name: formula
+          path: Formula/vpn.rb

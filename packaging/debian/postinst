@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+if ! command -v xray >/dev/null 2>&1; then
+  echo ""
+  echo "vpn installed. One more step: install the xray engine:"
+  echo "  bash -c \"\$(curl -fsSL https://github.com/XTLS/Xray-install/raw/main/install-release.sh)\""
+  echo ""
+  echo "Then add a server:  vpn add <vless://...>   and run:  vpn on"
+  echo ""
+fi
+
+exit 0

@@ -1,0 +1,12 @@
+Package: vpn
+Version: @VERSION@
+Section: net
+Priority: optional
+Architecture: @ARCH@
+Maintainer: vpncli <vpncli@users.noreply.github.com>
+Homepage: https://github.com/vpncli/vpn
+Description: Intuitive xray VPN manager
+ vpn drives xray from a friendly CLI/TUI: add servers from vless://
+ share links, switch between them, and shape routing with simple presets
+ (e.g. .ru domains bypass the VPN). The binary is self-contained; it only
+ needs the `xray` engine installed separately.
