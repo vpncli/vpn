@@ -1,0 +1,7 @@
+Origin: vpn
+Label: vpn
+Codename: stable
+Architectures: amd64 arm64
+Components: main
+Description: vpn APT repository
+SignWith: AE3E58AEFF6ECAFB3818C56018D60572868A8306

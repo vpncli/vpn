@@ -1,0 +1,5 @@
+Component: main
+Origin: vpn
+Label: vpn
+Architecture: amd64
+Description: vpn APT repository
