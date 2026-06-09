@@ -2,6 +2,7 @@
 
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { isDemo, demoGeo } from "./demo.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -18,6 +19,7 @@ const cache = new Map<string, Geo | null>();
  * (not tunneled). Returns null on failure; results are cached for the session.
  */
 export async function geolocate(ip: string): Promise<Geo | null> {
+  if (isDemo()) return demoGeo(ip);
   const cached = cache.get(ip);
   if (cached !== undefined) return cached;
 

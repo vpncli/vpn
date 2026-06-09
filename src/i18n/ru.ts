@@ -2,30 +2,77 @@
 
 export const ru: Record<string, string> = {
   // Banner / app
-  "xray VPN manager": "менеджер VPN на xray",
-  "intuitive xray VPN manager": "удобный менеджер VPN на xray",
+  "manage every VPN from your terminal": "управляй всеми VPN из терминала",
 
   // Main menu
-  "What do you want to do?": "Что вы хотите сделать?",
-  "Press Enter to connect": "Нажмите Enter для подключения",
-  Status: "Статус",
-  "Servers…": "Серверы…",
-  "Routing…": "Маршруты…",
   Logs: "Логи",
-  Quit: "Выход",
-  "active: {name}": "активен: {name}",
-  none: "нет",
   Language: "Язык",
   "Select language": "Выберите язык",
-  "↑/↓ move · Enter select · q quit": "↑/↓ выбор · Enter выбрать · q выход",
+
+  // Services dashboard
+  "Disconnect all": "Отключить всё",
+  "Enable xray": "Включить xray",
+  "Enable {name}": "Включить {name}",
+  "Add xray server": "Добавить xray-сервер",
+  "↵ enable {name}": "↵ включить {name}",
+  "↵ add xray server": "↵ добавить xray-сервер",
+  "⇥ settings": "⇥ настройки",
+  Settings: "Настройки",
+  "Manage routing": "Управление маршрутами",
+  "Add server": "Добавить сервер",
+  "↵ connect": "↵ подключить",
+  "↵ disconnect": "↵ отключить",
+  "↵ active": "↵ активен",
+  "↵ switch": "↵ выбрать",
+  "⇥ configure": "⇥ настроить",
+  "⇥ manage routing": "⇥ управление маршрутами",
+  "⇥ open": "⇥ открыть",
+  "↵ add server": "↵ добавить сервер",
+  "↵ settings": "↵ настройки",
+  "↵ add rule": "↵ добавить правило",
+  "⌫ remove": "⌫ удалить",
+  "↵ toggle": "↵ переключить",
+  "↵ select": "↵ выбрать",
+  "↵ apply": "↵ применить",
+  "Space toggle": "Space отметить",
+  "Add rule": "Добавить правило",
+  "No rules yet.": "Правил пока нет.",
+  "↑↓←→/wasd navigate · q/Esc quit": "↑↓←→/wasd навигация · q/Esc выход",
+  "↑↓←→/wasd navigate · q/Esc back": "↑↓←→/wasd навигация · q/Esc назад",
+  // Routes summary
+  presets: "пресеты",
+  direct: "Direct",
+  proxy: "Proxy",
+  block: "Block",
+  "No VPN services detected.": "VPN-сервисы не обнаружены.",
+  "disconnecting all…": "отключение всего…",
+  "connecting {name}…": "подключение {name}…",
+  "disconnecting {name}…": "отключение {name}…",
+  // Class chips (tunnel vs proxy)
+  "🌐 ALL TRAFFIC": "🌐 ВЕСЬ ТРАФИК",
+  "tunnel · captures all OS traffic": "туннель · перехватывает весь трафик ОС",
+  "⚡ BY RULES": "⚡ ПО ПРАВИЛАМ",
+  "proxy · splits traffic by rules": "прокси · делит трафик по правилам",
+  "⇥ servers": "⇥ серверы",
+  "⇥ servers & routes": "⇥ серверы и маршруты",
+  // Navigation hints
+  "↑↓←→/wasd pick · Enter switch · q/Esc back": "↑↓←→/wasd выбор · Enter переключить · q/Esc назад",
+  // Context-aware Enter hint
+  "↵ disconnect everything": "↵ отключить всё",
+  "nothing is connected": "ничего не подключено",
+
+  // Check Point connect form
+  "🔐 Connect {name}": "🔐 Подключить {name}",
+  "Sign in with your corporate credentials and OTP.": "Войдите с корпоративными учётными данными и OTP.",
+  Username: "Логин",
+  Password: "Пароль",
+  "One-time code (OTP)": "Одноразовый код (OTP)",
+  "your password": "ваш пароль",
+  "6-digit code": "6-значный код",
 
   // Power toggle
-  connect: "подключить",
-  disconnect: "отключить",
 
   // Busy labels
-  "starting…": "запуск…",
-  "stopping…": "остановка…",
   "adding server…": "добавление сервера…",
   "activating {name}…": "активация {name}…",
   "removing {name}…": "удаление {name}…",
@@ -36,8 +83,8 @@ export const ru: Record<string, string> = {
 
   // Servers
   Servers: "Серверы",
-  "➕ Add server": "➕ Добавить сервер",
-  "↑/↓ move · Enter open · Esc back": "↑/↓ выбор · Enter открыть · Esc назад",
+  "+ Add server": "+ Добавить сервер",
+  "↑↓/ws move · Enter open · q/Esc back": "↑↓/ws выбор · Enter открыть · q/Esc назад",
   "★ active": "★ активен",
   "ping…": "пинг…",
   offline: "недоступен",
@@ -48,27 +95,20 @@ export const ru: Record<string, string> = {
   "Set active": "Сделать активным",
   Rename: "Переименовать",
   Remove: "Удалить",
-  Back: "Назад",
 
   // Rename
   "Rename “{name}”": "Переименовать «{name}»",
   "new name": "новое имя",
 
   // Add server flow
-  "➕ Add server — paste a vless:// link": "➕ Добавить сервер — вставьте vless:// ссылку",
+  "+ Add server — paste a vless:// link": "+ Добавить сервер — вставьте vless:// ссылку",
   "Name this server": "Название сервера",
 
   // Routing
   Routing: "Маршруты",
-  "Presets…": "Пресеты…",
-  "Direct list": "Direct — мимо VPN",
-  "Proxy list": "Proxy — через VPN",
-  "Block list": "Block — блокировка",
-  "toggle rule bundles": "наборы правил",
   "bypass the VPN": "мимо VPN",
   "force through VPN": "через VPN",
   "drop traffic": "блокировать",
-  "Toggle routing presets": "Пресеты маршрутов",
   "Routing presets": "Пресеты маршрутов",
   // Preset titles
   "Russian sites direct": "Рос. сайты — direct",
@@ -82,14 +122,9 @@ export const ru: Record<string, string> = {
   "Netflix, YouTube, Spotify → VPN": "Netflix, YouTube, Spotify → VPN",
   "Block ads & trackers": "Блок рекламы и трекеров",
   "Localhost & private nets → direct": "Localhost и приватные сети → direct",
-  "Список {target}": "Список {target}",
-  "{target} list": "Список: {target}",
-  "➕ Add rule": "➕ Добавить правило",
-  "Enter removes": "Enter — удалить",
 
   // Add-rule wizard
   "What should {action}?": "Что должно {action}?",
-  "bypass the VPN ": "идти мимо VPN", // (unused guard)
   "go through the VPN": "идти через VPN",
   "be blocked": "блокироваться",
   "🌐 Website / domain": "🌐 Сайт / домен",
@@ -119,7 +154,7 @@ export const ru: Record<string, string> = {
   // Logs
   "xray log (last {n})": "лог xray (последние {n})",
   empty: "пусто",
-  "Esc back": "Esc назад",
+  "q/Esc back": "q/Esc назад",
 
   // Status dashboard
   "VPN status": "Статус VPN",
@@ -139,8 +174,8 @@ export const ru: Record<string, string> = {
   Total: "Итого",
   "locating…": "определение…",
 
+  // Tunnels panel
+
   // Shared widget hints
-  "↑/↓ move · Enter select · Esc cancel": "↑/↓ выбор · Enter выбрать · Esc отмена",
-  "↑/↓ move · Space toggle · Enter confirm · Esc cancel": "↑/↓ · Space отметить · Enter применить · Esc отмена",
   "Enter submit · Esc cancel · Ctrl-U clear": "Enter принять · Esc отмена · Ctrl-U очистить",
 };

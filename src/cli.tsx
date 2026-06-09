@@ -73,7 +73,7 @@ async function presetPickFlow(): Promise<void> {
   const items = listPresets().map((p) => ({
     label: p.name,
     value: p.name,
-    hint: p.description,
+    description: p.description,
     selected: p.enabled,
   }));
   const selected = await pickPresets(items);

@@ -18,7 +18,7 @@ interface HelpSection {
   items: HelpItem[];
 }
 
-const TAGLINE = "intuitive xray VPN manager";
+const TAGLINE = "manage every VPN from your terminal";
 
 const QUICK_START = ["vpn add vless://…", "vpn on", "vpn preset", "vpn status"];
 

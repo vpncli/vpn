@@ -5,6 +5,7 @@ import { openSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { paths } from "./paths.ts";
+import { isDemo } from "./demo.ts";
 
 let cachedPath: string | null | undefined;
 
@@ -29,6 +30,7 @@ export function requireXray(): string {
 }
 
 export function isRunning(): boolean {
+  if (isDemo()) return true;
   return spawnSync("pgrep", ["-x", "xray"]).status === 0;
 }
 
