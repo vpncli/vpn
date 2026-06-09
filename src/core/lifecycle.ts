@@ -10,6 +10,7 @@ import { getOs, type ProxyEnv, type StatusLine } from "../os/index.ts";
 import { getActive } from "./servers.ts";
 import { getEnabled } from "./presets.ts";
 import { ensureShellInit, type ShellInitResult } from "./shellinit.ts";
+import { isDemo } from "./demo.ts";
 
 /**
  * Hosts that should never go through the proxy (system-proxy bypass + NO_PROXY).
@@ -75,6 +76,7 @@ export interface OnResult {
 
 /** Regenerate config, start xray, and wire up the system proxy + env. */
 export function turnOn(ports: Ports = DEFAULT_PORTS): OnResult {
+  if (isDemo()) return { ok: true };
   const r = regenerate();
   if (!r.ok) return { ok: false, error: r.output };
 
@@ -90,6 +92,7 @@ export function turnOn(ports: Ports = DEFAULT_PORTS): OnResult {
 
 /** Async variant for the TUI — does not block the render loop while waiting. */
 export async function turnOnAsync(ports: Ports = DEFAULT_PORTS): Promise<OnResult> {
+  if (isDemo()) return { ok: true };
   const r = regenerate();
   if (!r.ok) return { ok: false, error: r.output };
 
@@ -108,6 +111,7 @@ export async function turnOffAsync(): Promise<void> {
 }
 
 export async function restartAsync(ports: Ports = DEFAULT_PORTS): Promise<OnResult> {
+  if (isDemo()) return { ok: true };
   xray.stop();
   await delay(800);
   return turnOnAsync(ports);
@@ -115,6 +119,7 @@ export async function restartAsync(ports: Ports = DEFAULT_PORTS): Promise<OnResu
 
 /** Regenerate config after a change; restart xray (async) if it is running. */
 export async function reapplyAsync(ports: Ports = DEFAULT_PORTS): Promise<OnResult> {
+  if (isDemo()) return { ok: true };
   const r = regenerate();
   if (!r.ok) return { ok: false, error: r.output };
   if (xray.isRunning()) return restartAsync(ports);
@@ -123,6 +128,7 @@ export async function reapplyAsync(ports: Ports = DEFAULT_PORTS): Promise<OnResu
 
 /** Tear down the proxy + env and stop xray. */
 export function turnOff(): void {
+  if (isDemo()) return;
   const os = getOs();
   os.proxyOff();
   os.appUnsetenv();
@@ -131,6 +137,7 @@ export function turnOff(): void {
 }
 
 export function restart(ports: Ports = DEFAULT_PORTS): OnResult {
+  if (isDemo()) return { ok: true };
   xray.stop();
   sleep(1);
   return turnOn(ports);

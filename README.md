@@ -90,8 +90,12 @@ vpn on                            # turn the xray proxy on
 vpn off                           # turn it off
 ```
 
-No xray server yet? Just run `vpn` — the big button becomes **+ Add xray server** and walks you
-through pasting a `vless://` link, right from the interface.
+First run, nothing configured yet? Just `vpn` — the big button is **+ Add xray server**; paste your
+`vless://` link and you're connected, without ever leaving the TUI:
+
+<p align="center">
+  <img src="docs/images/quickstart.gif" alt="first run: add an xray server and connect, in the TUI" width="820">
+</p>
 
 ## The app
 
@@ -124,6 +128,18 @@ button** up top adapts to your state:
 | **Linux** (NetworkManager) | WireGuard, OpenVPN/OpenConnect… connections | `nmcli` up / down |
 
 Each up service shows its country flag (geo of the exit IP), latency, and live ↑/↓ traffic.
+
+### Check Point (corporate VPN)
+
+Corporate **Check Point Endpoint Security** normally means a clunky GUI plus a separate OTP app.
+`vpncli` detects the `trac` client and connects it **without leaving the terminal** — Enter on the
+Check Point card walks you through **username → password → one-time code**, then brings the tunnel
+up. It's a full tunnel, so connecting it drops the other tunnels — but your xray proxy keeps running
+on top, so per-rule routing still applies over the corporate link.
+
+<p align="center">
+  <img src="docs/images/check-point.gif" alt="connecting Check Point with corporate password and OTP from the terminal" width="820">
+</p>
 
 ### The xray panel
 
@@ -177,6 +193,10 @@ Check Point are managed interactively in the dashboard.)
 | `vpn lang en\|ru` | set language |
 | `vpn init` | auto-source the proxy env in new terminals |
 
+<p align="center">
+  <img src="docs/images/commands.gif" alt="vpn ls, on, ip, off from the command line" width="820">
+</p>
+
 ## Configuration
 
 State lives under `~/.config/vpn/` (xray side only — app-VPNs keep their own config):
@@ -194,6 +214,52 @@ config.json           GENERATED xray config (don't edit by hand)
 Need internal/corporate routing? Keep it out of any shared config: add hosts with
 `vpn route add direct <rule>`, set extra proxy-bypass hosts via `VPN_EXTRA_BYPASS`, and point
 internal domains at an internal resolver with a `dns.json`.
+
+## Updating
+
+Use the same channel you installed from:
+
+```sh
+brew upgrade vpn                                   # Homebrew
+sudo apt-get update && sudo apt-get install --only-upgrade vpn   # apt
+curl -fsSL https://raw.githubusercontent.com/vpncli/vpn/main/install.sh | bash   # curl (re-run = upgrade)
+```
+
+`vpn` only ever stores plain config under `~/.config/vpn/`, so upgrades never touch your servers or
+routing. Check your version with `vpn --version`.
+
+## Uninstalling
+
+First, undo what `vpn` changed at runtime — this clears the system proxy + env vars and stops xray:
+
+```sh
+vpn off
+```
+
+Then remove the binary (whichever channel you used):
+
+```sh
+brew uninstall vpn                 # Homebrew
+sudo apt-get remove vpn            # apt
+sudo rm "$(command -v vpn)"        # curl install (usually /usr/local/bin/vpn)
+```
+
+Finally, drop the leftovers if you want a clean slate:
+
+```sh
+rm -rf ~/.config/vpn               # servers, routes, presets, generated config
+```
+
+`vpn` also adds a two-line auto-source block to your shell rc (`~/.zshrc` or `~/.bashrc`); delete it
+to finish up:
+
+```
+# vpn proxy env
+[ -f ~/.config/vpn/proxy.env ] && source ~/.config/vpn/proxy.env
+```
+
+App-VPNs (WireGuard, Outline, Check Point…) keep their own clients and config — `vpn` only detects
+them, so uninstalling it leaves them untouched.
 
 ---
 
@@ -253,22 +319,28 @@ touches the network or shows a real VPN:
 brew install vhs
 bun run build                                   # the tapes record the installed `vpn`
 XDG_CONFIG_HOME=/tmp/vpndemo bun scripts/demo-seed.ts   # fake servers/routes/presets
-for t in overview servers routing language; do vhs docs/tapes/$t.tape; done
+for t in quickstart commands overview servers check-point routing language; do vhs docs/tapes/$t.tape; done
 ```
 
 Each tape already exports `VPN_DEMO=1 XDG_CONFIG_HOME=/tmp/vpndemo`, so you only seed once.
 
 ### Releasing
 
-Tag a version and CI does the rest — builds the binaries, creates a GitHub Release, publishes the
-`.deb`s and the signed APT repo to Pages, and patches the Homebrew formula:
+Releases are **automatic** — no manual versioning. Push source changes to `main` and
+`.github/workflows/release.yml` bumps the **patch** version in `package.json`, builds the binaries
++ `.deb`s with that version, creates the GitHub Release + tag, publishes the signed APT repo to
+Pages, and patches the Homebrew formula. The bump is committed back to `main` with `[skip ci]`, so it
+never loops; docs/README/GIF-only changes don't cut a release.
 
-```sh
-git tag v1.0.0 && git push origin v1.0.0
-```
+Need a minor or major bump? Run the workflow by hand from the **Actions** tab (`workflow_dispatch` →
+`patch` / `minor` / `major`).
 
-See `.github/workflows/release.yml`. The APT repo needs `GPG_PRIVATE_KEY` / `GPG_KEY` repo secrets;
-the Homebrew formula lives in the `vpncli/homebrew-tap` repo.
+Notes:
+- `github-actions[bot]` must be allowed to push to `main` (no blocking branch protection) so the
+  version bump persists.
+- The APT repo needs `GPG_PRIVATE_KEY` / `GPG_KEY` repo secrets; the Homebrew formula lives in the
+  `vpncli/homebrew-tap` repo.
+- GIFs are **not** regenerated by CI — re-record them locally when the UI changes (see above).
 
 ## License
 

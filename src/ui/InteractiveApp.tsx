@@ -253,6 +253,7 @@ function AddServerFlow({ onDone, onCancel }: { onDone: (link: string, name: stri
   if (link === null) {
     return (
       <TextInput
+        key="add-link"
         label={t("+ Add server — paste a vless:// link")}
         error={error}
         placeholder="vless://uuid@host:port?...#name"
@@ -273,6 +274,7 @@ function AddServerFlow({ onDone, onCancel }: { onDone: (link: string, name: stri
 
   return (
     <TextInput
+      key="add-name"
       label={t("Name this server")}
       initialValue={defaultName}
       placeholder="my-server"

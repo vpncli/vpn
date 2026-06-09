@@ -2,6 +2,7 @@
 /** vpn entrypoint: parse argv (meow) and dispatch to commands or the Ink TUI. */
 
 import meow from "meow";
+import pkg from "../package.json";
 import { ensureDirs } from "./core/paths.ts";
 import { err } from "./ui/theme.ts";
 import type { RouteTarget } from "./core/types.ts";
@@ -43,6 +44,9 @@ const cli = meow(
 `,
   {
     importMeta: import.meta,
+    // Pass the version explicitly: `import.meta`-based lookup fails inside the
+    // bun-compiled single binary, so `vpn --version` would otherwise be empty.
+    version: pkg.version,
     flags: {},
   },
 );

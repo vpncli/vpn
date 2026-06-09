@@ -46,11 +46,13 @@ const DIRECT_ARGS = ["--noproxy", "*"];
 
 /** Public IP as seen without the proxy. */
 export function getRealIp(): string | null {
+  if (isDemo()) return demoRealIp();
   return curl(DIRECT_TIMEOUT, DIRECT_ARGS);
 }
 
 /** Public IP as seen through the local SOCKS proxy (i.e. the VPN exit). */
 export function getVpnIp(socksPort: number = DEFAULT_PORTS.socks): string | null {
+  if (isDemo()) return demoVpnIp();
   return curl(PROXY_TIMEOUT, proxyArgs(socksPort));
 }
 

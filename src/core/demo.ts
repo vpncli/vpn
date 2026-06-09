@@ -57,8 +57,10 @@ export function demoStats(): Stats {
   return { inbound: {}, outbound: { proxy: grow(2_400_000, 18_000_000, 22_000, 140_000), direct: { up: 0, down: 0 } } };
 }
 
-/** Synthetic full-tunnels shown next to the demo-config xray servers. */
+/** Synthetic full-tunnels shown next to the demo-config xray servers.
+ *  VPN_DEMO_FRESH=1 hides them — a clean first-run with nothing configured. */
 export function demoTunnels(): Service[] {
+  if (process.env.VPN_DEMO_FRESH === "1") return [];
   return [
     { id: "demo:outline", kind: "scutil", type: "Outline", name: "Outline", fullTunnel: true, status: "up", iface: "utun-demo-outline" },
     { id: "demo:wg", kind: "scutil", type: "WireGuard", name: "Office", fullTunnel: true, status: "down" },

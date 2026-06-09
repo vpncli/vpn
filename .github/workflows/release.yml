@@ -1,22 +1,70 @@
 name: release
 
-# Tag a release to build binaries, .deb packages, and refresh the APT repo.
-#   git tag v0.1.0 && git push origin v0.1.0
+# Auto-release on every source change to main.
+#
+# Push source to main  →  this workflow bumps the PATCH version in package.json,
+# builds the binaries + .deb packages with that version, creates the GitHub
+# release + tag, refreshes the APT repo, and commits the bump back to main
+# (with [skip ci] so it doesn't re-trigger itself).
+#
+# No manual versioning needed. For a minor/major bump, trigger it by hand from the
+# Actions tab (workflow_dispatch → choose patch / minor / major). Docs/README/GIF-only
+# changes are ignored — they never cut a release.
+#
+# Requires that github-actions[bot] can push to main (no branch protection that
+# blocks it, or a PAT) — otherwise the version bump won't persist.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "Formula/**"
+      - "packaging/**"
+      - "install.sh"
+      - "package.json"
+      - "bun.lock"
+      - "tsconfig.json"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
 
 permissions:
   contents: write
 
+# Serialize releases so two pushes can't race on the version bump / tag.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
-    # `secrets` can't be used in `if:` — map it to an env var here and check that.
+    # Never re-run on our own bump/APT commits (they carry [skip ci]); always run
+    # when triggered by hand.
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
     env:
       HAS_GPG: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+      BUMP: ${{ github.event.inputs.bump || 'patch' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Bump the version BEFORE building so the binary embeds it (Banner +
+      # `vpn --version` read package.json at build time).
+      - name: Bump version
+        id: ver
+        run: |
+          TAG="$(npm --no-git-tag-version version "$BUMP")"   # e.g. v1.1.0, updates package.json
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "Releasing $TAG"
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -43,20 +91,10 @@ jobs:
 
       - name: Build .deb packages
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${{ steps.ver.outputs.version }}"
           sudo apt-get update && sudo apt-get install -y dpkg-dev reprepro
           bash scripts/build-deb.sh "$VERSION" amd64
           bash scripts/build-deb.sh "$VERSION" arm64
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/vpn-darwin-arm64
-            dist/vpn-darwin-x64
-            dist/vpn-linux-x64
-            dist/vpn-linux-arm64
-            dist/*.deb
 
       # --- APT repository on GitHub Pages -----------------------------------
       # Requires repo secrets: GPG_PRIVATE_KEY (ascii-armored), GPG_KEY (key id/email).
@@ -99,21 +137,38 @@ jobs:
           GPG_KEY: ${{ secrets.GPG_KEY }}
         run: bash scripts/publish-apt.sh dist/*.deb
 
-      - name: Commit APT repo
-        if: env.HAS_GPG == 'true'
+      # --- Commit the bump (+ APT repo) and tag, then publish ----------------
+      # The tag points at the bump commit; the release is attached to it next.
+      # [skip ci] keeps this push from re-triggering the workflow.
+      - name: Commit bump + tag
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs
-          git commit -m "apt: publish ${GITHUB_REF_NAME}" || echo "nothing to commit"
-          git push origin HEAD:main || echo "push skipped"
+          git add package.json docs
+          git commit -m "release: ${{ steps.ver.outputs.tag }} [skip ci]"
+          git tag "${{ steps.ver.outputs.tag }}"
+          git push origin HEAD:main
+          git push origin "${{ steps.ver.outputs.tag }}"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: ${{ steps.ver.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            dist/vpn-darwin-arm64
+            dist/vpn-darwin-x64
+            dist/vpn-linux-x64
+            dist/vpn-linux-arm64
+            dist/*.deb
 
       # --- Homebrew tap ------------------------------------------------------
       # Patches the formula's sha256 placeholders. To auto-push to the tap repo,
       # add a step that clones vpncli/homebrew-tap with a PAT and copies Formula/vpn.rb.
       - name: Patch formula checksums
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${{ steps.ver.outputs.version }}"
           sed -i "s/^  version .*/  version \"$VERSION\"/" Formula/vpn.rb
           sed -i "s/REPLACE_DARWIN_ARM64/${{ steps.sums.outputs.vpn_darwin_arm64 }}/" Formula/vpn.rb
           sed -i "s/REPLACE_DARWIN_X64/${{ steps.sums.outputs.vpn_darwin_x64 }}/" Formula/vpn.rb
