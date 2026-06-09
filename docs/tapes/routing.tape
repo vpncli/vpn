@@ -1,56 +1,44 @@
-# Add a routing rule via the guided wizard — no xray syntax needed
+# Routing: card-based editor — targets, rule lists, and toggleable presets
 Output docs/images/routing.gif
 Set Shell "bash"
 Set FontSize 16
-Set Width 1180
-Set Height 820
+Set Width 1400
+Set Height 900
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 60ms
 
 Hide
-Type "export PATH=$HOME/.bun/bin:$PATH XDG_CONFIG_HOME=/tmp/vpndemo; clear"
+Type "export PATH=$HOME/.bun/bin:$PATH VPN_DEMO=1 XDG_CONFIG_HOME=/tmp/vpndemo; echo en > /tmp/vpndemo/vpn/lang; clear"
 Enter
 Show
 
 Type "vpn"
 Enter
-Sleep 3500ms
+Sleep 4s
 Down
+Sleep 700ms
+Tab
+Sleep 2500ms
 Down
-Down
-Sleep 400ms
-Enter
-Sleep 1000ms
-Down
-Sleep 400ms
-Enter
-Sleep 1000ms
-Enter
-Sleep 2000ms
-Down
-Sleep 1000ms
-Enter
-Sleep 2200ms
-Down
+Sleep 600ms
 Down
 Sleep 1500ms
-Escape
-Sleep 700ms
-Down
-Down
-Sleep 800ms
-Enter
-Sleep 2200ms
+Tab
+Sleep 2500ms
 Down
 Sleep 1200ms
+Tab
+Sleep 3000ms
+Escape
+Sleep 1200ms
+Tab
+Sleep 3000ms
 Escape
 Sleep 700ms
 Escape
-Sleep 600ms
+Sleep 700ms
 Escape
-Sleep 600ms
-Escape
-Sleep 500ms
+Sleep 700ms
 Type "q"
 Sleep 800ms

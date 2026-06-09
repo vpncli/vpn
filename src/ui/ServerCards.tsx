@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import type { ServerProfile } from "../core/types.ts";
 import { PingBadge, useGeo, usePing } from "./Ping.tsx";
+import { arrowDir } from "./grid.ts";
 import { flagEmoji } from "./format.ts";
 import { t } from "../core/i18n.ts";
 
@@ -53,8 +54,9 @@ export function ServerCards({
   const [i, setI] = useState(0);
 
   useInput((input, key) => {
-    if (key.upArrow || input === "k") setI((x) => (x - 1 + count) % count);
-    else if (key.downArrow || input === "j") setI((x) => (x + 1) % count);
+    const d = arrowDir(input, key);
+    if (d === "up") setI((x) => (x - 1 + count) % count);
+    else if (d === "down") setI((x) => (x + 1) % count);
     else if (key.return || input === " ") onSelect(i === 0 ? "__add" : servers[i - 1]!.name);
     else if (key.escape || input === "q") onCancel();
   });
@@ -66,12 +68,12 @@ export function ServerCards({
       </Text>
       <Box>
         <Text color={i === 0 ? "cyan" : "gray"}>{i === 0 ? "❯ " : "  "}</Text>
-        <Text bold={i === 0}>{t("➕ Add server")}</Text>
+        <Text bold={i === 0}>{t("+ Add server")}</Text>
       </Box>
       {servers.map((s, idx) => (
         <ServerCard key={s.name} s={s} active={s.name === activeName} focused={i === idx + 1} />
       ))}
-      <Text color="gray">  {t("↑/↓ move · Enter open · Esc back")}</Text>
+      <Text color="gray">  {t("↑↓/ws move · Enter open · q/Esc back")}</Text>
     </Box>
   );
 }

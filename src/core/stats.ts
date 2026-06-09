@@ -4,6 +4,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { DEFAULT_PORTS } from "./types.ts";
 import { xrayPath } from "./xray.ts";
+import { isDemo, demoStats } from "./demo.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -33,6 +34,7 @@ function emptyChannel(): ChannelTraffic {
  * (e.g. VPN is off). Counters are cumulative since the xray process started.
  */
 export async function getStatsAsync(apiPort: number = DEFAULT_PORTS.api): Promise<Stats | null> {
+  if (isDemo()) return demoStats();
   const xray = xrayPath();
   if (!xray) return null;
   let raw: RawStat[];

@@ -1,15 +1,15 @@
-# Main screen: power toggle + live traffic + active server flag/ping + menu
+# Dashboard: every VPN as a card — xray proxy + full tunnels, live flag/ping/traffic
 Output docs/images/overview.gif
 Set Shell "bash"
 Set FontSize 16
-Set Width 1180
-Set Height 820
+Set Width 1400
+Set Height 900
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 60ms
 
 Hide
-Type "export PATH=$HOME/.bun/bin:$PATH XDG_CONFIG_HOME=/tmp/vpndemo; clear"
+Type "export PATH=$HOME/.bun/bin:$PATH VPN_DEMO=1 XDG_CONFIG_HOME=/tmp/vpndemo; echo en > /tmp/vpndemo/vpn/lang; clear"
 Enter
 Show
 
@@ -17,14 +17,18 @@ Type "vpn"
 Enter
 Sleep 4s
 Down
-Sleep 800ms
+Sleep 1200ms
+Right
+Sleep 1200ms
 Down
-Sleep 800ms
-Down
-Sleep 1500ms
+Sleep 1200ms
+Left
+Sleep 1200ms
 Up
-Sleep 700ms
-Up
-Sleep 2s
+Sleep 1000ms
+Tab
+Sleep 3500ms
+Escape
+Sleep 1200ms
 Type "q"
 Sleep 800ms

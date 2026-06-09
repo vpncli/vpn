@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Box, Text } from "ink";
 import type { RouteTarget } from "../core/types.ts";
-import { Select, type SelectItem } from "./Select.tsx";
+import { CardSelect, type CardOption } from "./CardSelect.tsx";
 import { TextInput } from "./TextInput.tsx";
 import { flagEmoji } from "./format.ts";
 import { t } from "../core/i18n.ts";
@@ -15,7 +15,7 @@ const TARGET_ACTION: Record<RouteTarget, string> = {
 };
 
 /** Curated geosite categories (present in the standard geosite.dat). */
-function services(): SelectItem<string>[] {
+function services(): CardOption<string>[] {
   return [
     { label: "🤖 OpenAI / ChatGPT", value: "openai" },
     { label: "🔍 Google", value: "google" },
@@ -34,7 +34,7 @@ function services(): SelectItem<string>[] {
 }
 
 /** Common countries → geoip codes. */
-function countries(): SelectItem<string>[] {
+function countries(): CardOption<string>[] {
   const items: Array<[string, string]> = [
     ["RU", "Russia"],
     ["US", "United States"],
@@ -73,21 +73,22 @@ export function AddRuleWizard({
 }): React.JSX.Element {
   const [step, setStep] = useState<Step>("kind");
 
-  const kinds: SelectItem<Step>[] = [
-    { label: t("🌐 Website / domain"), value: "domain", hint: t("e.g. youtube.com") },
-    { label: t("📦 Known service"), value: "service", hint: "OpenAI, Netflix, Telegram…" },
-    { label: t("🏳  Country"), value: "country", hint: t("all IPs of a country") },
-    { label: t("🔢 IP or subnet"), value: "ip", hint: "1.2.3.4 / 10.0.0.0/8" },
-    { label: t("⌨  Custom rule"), value: "custom", hint: t("raw xray syntax") },
+  const kinds: CardOption<Step>[] = [
+    { label: t("🌐 Website / domain"), value: "domain", description: t("e.g. youtube.com") },
+    { label: t("📦 Known service"), value: "service", description: "OpenAI, Netflix, Telegram…" },
+    { label: t("🏳  Country"), value: "country", description: t("all IPs of a country") },
+    { label: t("🔢 IP or subnet"), value: "ip", description: "1.2.3.4 / 10.0.0.0/8" },
+    { label: t("⌨  Custom rule"), value: "custom", description: t("raw xray syntax") },
   ];
 
   let body: React.JSX.Element;
   switch (step) {
     case "kind":
       body = (
-        <Select
+        <CardSelect
           heading={t("What should {action}?", { action: t(TARGET_ACTION[target]) })}
           items={kinds}
+          minHeight={4}
           onCancel={onCancel}
           onSelect={(v) => setStep(v)}
         />
@@ -95,62 +96,50 @@ export function AddRuleWizard({
       break;
     case "domain":
       body = (
-        <Box flexDirection="column">
-          <Text bold color="cyan">
-            {t("Enter a website")}
-          </Text>
-          <TextInput
-            placeholder="youtube.com"
-            onCancel={() => setStep("kind")}
-            onSubmit={(v) => {
-              const d = normalizeDomain(v);
-              if (d) onAdd(`domain:${d}`);
-            }}
-          />
-        </Box>
+        <TextInput
+          label={t("Enter a website")}
+          placeholder="youtube.com"
+          onCancel={() => setStep("kind")}
+          onSubmit={(v) => {
+            const d = normalizeDomain(v);
+            if (d) onAdd(`domain:${d}`);
+          }}
+        />
       );
       break;
     case "service":
       body = (
-        <Select heading={t("Pick a service")} items={services()} onCancel={() => setStep("kind")} onSelect={(key) => onAdd(`geosite:${key}`)} />
+        <CardSelect heading={t("Pick a service")} items={services()} onCancel={() => setStep("kind")} onSelect={(key) => onAdd(`geosite:${key}`)} />
       );
       break;
     case "country":
       body = (
-        <Select heading={t("Pick a country")} items={countries()} onCancel={() => setStep("kind")} onSelect={(cc) => onAdd(`geoip:${cc}`)} />
+        <CardSelect heading={t("Pick a country")} items={countries()} onCancel={() => setStep("kind")} onSelect={(cc) => onAdd(`geoip:${cc}`)} />
       );
       break;
     case "ip":
       body = (
-        <Box flexDirection="column">
-          <Text bold color="cyan">
-            {t("Enter an IP or subnet")}
-          </Text>
-          <TextInput
-            placeholder="1.2.3.4 or 10.0.0.0/8"
-            onCancel={() => setStep("kind")}
-            onSubmit={(v) => {
-              if (v.trim()) onAdd(v.trim());
-            }}
-          />
-        </Box>
+        <TextInput
+          label={t("Enter an IP or subnet")}
+          placeholder="1.2.3.4 or 10.0.0.0/8"
+          onCancel={() => setStep("kind")}
+          onSubmit={(v) => {
+            if (v.trim()) onAdd(v.trim());
+          }}
+        />
       );
       break;
     case "custom":
       body = (
-        <Box flexDirection="column">
-          <Text bold color="cyan">
-            {t("Custom rule (xray syntax)")}
-          </Text>
-          <Text color="gray">geosite:openai · geoip:ru · domain:x.com · regexp:\.ru$</Text>
-          <TextInput
-            placeholder="geosite:openai"
-            onCancel={() => setStep("kind")}
-            onSubmit={(v) => {
-              if (v.trim()) onAdd(v.trim());
-            }}
-          />
-        </Box>
+        <TextInput
+          label={t("Custom rule (xray syntax)")}
+          description="geosite:openai · geoip:ru · domain:x.com · regexp:\.ru$"
+          placeholder="geosite:openai"
+          onCancel={() => setStep("kind")}
+          onSubmit={(v) => {
+            if (v.trim()) onAdd(v.trim());
+          }}
+        />
       );
       break;
   }

@@ -1,7 +1,7 @@
 /** Ping hook + badges (latency / availability) shared by the menu and server cards. */
 
 import React, { useEffect, useState } from "react";
-import { Box, Text } from "ink";
+import { Text } from "ink";
 import Spinner from "ink-spinner";
 import { tcpPing } from "../core/ping.ts";
 import { geolocate, type Geo } from "../core/geo.ts";
@@ -40,6 +40,7 @@ export function usePing(host: string, port: number, intervalMs = 5000): PingStat
 export function useGeo(ip: string): Geo | null {
   const [geo, setGeo] = useState<Geo | null>(null);
   useEffect(() => {
+    if (!ip) return;
     let alive = true;
     void geolocate(ip).then((g) => alive && setGeo(g));
     return () => {
@@ -66,21 +67,4 @@ export function PingBadge({ ms, loading }: PingState): React.JSX.Element {
     );
   if (ms === null) return <Text color="red">✕ {t("offline")}</Text>;
   return <Text color={pingColor(ms)}>● {ms} ms</Text>;
-}
-
-/** The active server line shown on the main menu: name · address · ping. */
-export function ActiveServerBadge({ name, host, port }: { name: string; host: string; port: number }): React.JSX.Element {
-  const state = usePing(host, port);
-  return (
-    <Box>
-      <Text color="gray">🖥 </Text>
-      <Text bold>{name}</Text>
-      <Text color="gray">
-        {"  "}
-        {host}:{port}
-        {"  "}
-      </Text>
-      <PingBadge {...state} />
-    </Box>
-  );
 }

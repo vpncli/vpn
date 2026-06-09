@@ -4,6 +4,7 @@ import { execFile } from "node:child_process";
 import { spawnSync } from "node:child_process";
 import { promisify } from "node:util";
 import { DEFAULT_PORTS } from "./types.ts";
+import { isDemo, demoRealIp, demoVpnIp, demoInterfaceIp } from "./demo.ts";
 
 const ENDPOINTS = ["ifconfig.me", "icanhazip.com", "api.ipify.org"];
 const execFileAsync = promisify(execFile);
@@ -54,9 +55,17 @@ export function getVpnIp(socksPort: number = DEFAULT_PORTS.socks): string | null
 }
 
 export function getRealIpAsync(): Promise<string | null> {
+  if (isDemo()) return Promise.resolve(demoRealIp());
   return curlAsync(DIRECT_TIMEOUT, DIRECT_ARGS);
 }
 
 export function getVpnIpAsync(socksPort: number = DEFAULT_PORTS.socks): Promise<string | null> {
+  if (isDemo()) return Promise.resolve(demoVpnIp());
   return curlAsync(PROXY_TIMEOUT, proxyArgs(socksPort));
+}
+
+/** Public exit IP as seen when bound to a specific interface (null for split tunnels). */
+export function getInterfaceIpAsync(iface: string): Promise<string | null> {
+  if (isDemo()) return Promise.resolve(demoInterfaceIp(iface));
+  return curlAsync(PROXY_TIMEOUT, ["--interface", iface, "--noproxy", "*"]);
 }

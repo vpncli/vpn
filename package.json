@@ -1,7 +1,7 @@
 {
   "name": "vpn",
-  "version": "0.1.0",
-  "description": "Intuitive xray VPN manager: server profiles, simple routing presets, and a pretty TUI",
+  "version": "1.0.0",
+  "description": "vpncli — manage every VPN from your terminal",
   "type": "module",
   "bin": {
     "vpn": "./src/cli.tsx"
