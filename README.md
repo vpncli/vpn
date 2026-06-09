@@ -9,8 +9,8 @@
 
 <p align="center">
   <a href="https://github.com/vpncli/vpn/actions/workflows/release.yml"><img src="https://github.com/vpncli/vpn/actions/workflows/release.yml/badge.svg" alt="Build status"></a>
-  <a href="https://github.com/vpncli/vpn/releases/latest"><img src="https://img.shields.io/github/v/release/vpncli/vpn?style=flat-square&label=version&labelColor=1f2836&color=34d399&cacheSeconds=3600" alt="Latest version"></a>
-  <a href="https://github.com/vpncli/vpn/releases"><img src="https://img.shields.io/github/downloads/vpncli/vpn/total?style=flat-square&labelColor=1f2836&color=38bdf8&cacheSeconds=3600" alt="Downloads"></a>
+  <a href="https://github.com/vpncli/vpn/releases/latest"><img src="https://img.shields.io/github/v/release/vpncli/vpn?style=flat-square&label=version&labelColor=1f2836&color=34d399&cacheSeconds=300&v=2" alt="Latest version"></a>
+  <a href="https://github.com/vpncli/vpn/releases"><img src="https://img.shields.io/github/downloads/vpncli/vpn/total?style=flat-square&labelColor=1f2836&color=38bdf8&cacheSeconds=300&v=2" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-1f2836?style=flat-square" alt="Platform: macOS | Linux">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1f2836?style=flat-square" alt="License: MIT"></a>
 </p>
