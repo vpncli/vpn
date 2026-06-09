@@ -4,35 +4,35 @@ Hash: SHA512
 Origin: vpn
 Label: vpn
 Codename: stable
-Date: Mon, 08 Jun 2026 15:12:30 UTC
+Date: Tue, 09 Jun 2026 20:42:29 UTC
 Architectures: amd64 arm64
 Components: main
 Description: vpn APT repository
 MD5Sum:
- 9ce32a3b9dd3aef97f05298ac94ae435 698 main/binary-amd64/Packages
- b4c52409116b8c90c6d4d9e05bfcfe8b 501 main/binary-amd64/Packages.gz
+ 90eeab12363081a0ffa4d2109f9b4286 698 main/binary-amd64/Packages
+ 05d7d04b644859c56d7196effcdbc45e 501 main/binary-amd64/Packages.gz
  4dea5737b7c4b6f9f354c61c8882b39e 91 main/binary-amd64/Release
- c3fc8111e2bf240fc1eba2f2cd3a2411 698 main/binary-arm64/Packages
- e37bd9f514179656f744926888e25dcb 502 main/binary-arm64/Packages.gz
+ e48395a83d75fb741ccb890faf08e35a 698 main/binary-arm64/Packages
+ b3266eb01eb382cdd6a9e9c8f58e7db0 501 main/binary-arm64/Packages.gz
  3bb14b02b7a03917508ac099616bf394 91 main/binary-arm64/Release
 SHA1:
- 93bd6ed83881a083a020864110c1829e4548a0a8 698 main/binary-amd64/Packages
- 4463815c1940f3108db3c88c28862e2b1771f4e1 501 main/binary-amd64/Packages.gz
+ 140925468b69b4f3b78f806e75a465937b31527f 698 main/binary-amd64/Packages
+ eac0ba4a21039375046a88171e0fe3262e58ad01 501 main/binary-amd64/Packages.gz
  d5c0a4a53749f43a0837b5d8d5eceb9c1060ca86 91 main/binary-amd64/Release
- 50bce357edfdf408b4a872d9f4ceeae036039580 698 main/binary-arm64/Packages
- c18c9daf194b71f8f53bfd370495ef20441642bb 502 main/binary-arm64/Packages.gz
+ b2bee158046156921551b1efc5846c0617192fe5 698 main/binary-arm64/Packages
+ 77fe820c3780eeed11421eb8ebe501fb0dff7fe7 501 main/binary-arm64/Packages.gz
  0c4a83b58715a1bf716f2ee65c48e203fe70507c 91 main/binary-arm64/Release
 SHA256:
- ea4ff37951c41c93354b3b267ae06c577cf4c11d2809a54ec21bfdf2300bcb2b 698 main/binary-amd64/Packages
- abbd17386dacb83c333c6409128bb4b9054eab8209ffe5236c383c4bc8041387 501 main/binary-amd64/Packages.gz
+ bfb8fd2a626633fe59a3288e9a55ddc402950e104635919ba3b35c490d3b3d6d 698 main/binary-amd64/Packages
+ da0d33695ea734abcaf47773cd636625a333739697a9ee5a71c0dcb07e36c43b 501 main/binary-amd64/Packages.gz
  492ea16d680435b2ad89f7bf743e46f7e3046004c9ce277ed995a04a280ee818 91 main/binary-amd64/Release
- 6a871586135f215dbee2399c356ee19cb2ad7419b1651b6c38ec145a5357cc23 698 main/binary-arm64/Packages
- fdccae56e550c054ff554480c67af06846d680dd16b229e8a900172d03fb476a 502 main/binary-arm64/Packages.gz
+ 42c7d0519522cf892c9597eb78585fbfb5362ceb0909080dae0fcd5288ed88d5 698 main/binary-arm64/Packages
+ ccd4318d4252f0faa1813edb1267db2144798a58b03129e6a1f43c3471557ccc 501 main/binary-arm64/Packages.gz
  644e8c9a50756af058ef16e8bc92427ca471ad8d56f189c36789a1342620a049 91 main/binary-arm64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQSuPliu/27K+zgYxWAY1gVyhoqDBgUCaibb3gAKCRAY1gVyhoqD
-BpTqAP94nTwMeGR4H6HYRgbR7JboxRVtzYiwyBDGOtB+JwHnIgD/X81Mgapincag
-aaE2TO4hRDx9CfoofBVy57pTsE9RuAA=
-=HYsw
+iHUEARYKAB0WIQSuPliu/27K+zgYxWAY1gVyhoqDBgUCaih6tQAKCRAY1gVyhoqD
+BrvEAPsF2BltJo0xVTdo9ifW1sAJVDp14+aFyS/Y+xOLRr3F6wEAmRRMt4EH7c0V
+r7OXcOSFJwzyyQ/5X/At6my8PY9eEQQ=
+=1x7d
 -----END PGP SIGNATURE-----
