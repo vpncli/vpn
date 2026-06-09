@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/overview.gif" alt="vpncli dashboard" width="820">
+  <img src="docs/images/dashboard.gif" alt="vpncli dashboard" width="820">
 </p>
 
 ---
@@ -131,7 +131,7 @@ Each up service shows its country flag (geo of the exit IP), latency, and live �
 (Enter switches, Tab edits/renames/removes), and a **Routing** widget.
 
 <p align="center">
-  <img src="docs/images/servers.gif" alt="xray panel: real/VPN IP and server cards with flags + ping" width="820">
+  <img src="docs/images/xray-panel.gif" alt="xray panel: real/VPN IP and server cards with flags + ping" width="820">
 </p>
 
 ### Routing (xray)
@@ -149,7 +149,7 @@ unmatched goes through the proxy. Prefer ready-made bundles? Toggle **presets** 
 `ai-via-vpn`, `streaming-via-vpn`, `ads-block`, `dev-direct`).
 
 <p align="center">
-  <img src="docs/images/routing.gif" alt="card-based routing editor: targets, rules and presets" width="820">
+  <img src="docs/images/routing-editor.gif" alt="card-based routing editor: targets, rules and presets" width="820">
 </p>
 
 ### Languages
@@ -157,7 +157,7 @@ unmatched goes through the proxy. Prefer ready-made bundles? Toggle **presets** 
 Switch the whole interface between **English** and **Русский** on the fly (Settings → Language).
 
 <p align="center">
-  <img src="docs/images/language.gif" alt="switching interface language English and Русский" width="820">
+  <img src="docs/images/language-switch.gif" alt="switching interface language English and Русский" width="820">
 </p>
 
 ## Commands

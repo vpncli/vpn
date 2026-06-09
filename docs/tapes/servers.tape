@@ -1,9 +1,9 @@
 # xray panel: real vs VPN IP, server cards with country flags + live ping
-Output docs/images/servers.gif
+Output docs/images/xray-panel.gif
 Set Shell "bash"
 Set FontSize 16
 Set Width 1400
-Set Height 900
+Set Height 1400
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 60ms

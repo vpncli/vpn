@@ -1,9 +1,9 @@
 # Switch interface language: English <-> Русский (Settings → Language, Tab to open)
-Output docs/images/language.gif
+Output docs/images/language-switch.gif
 Set Shell "bash"
 Set FontSize 16
 Set Width 1400
-Set Height 900
+Set Height 1000
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 60ms

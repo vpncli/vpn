@@ -1,9 +1,9 @@
 # Dashboard: every VPN as a card — xray proxy + full tunnels, live flag/ping/traffic
-Output docs/images/overview.gif
+Output docs/images/dashboard.gif
 Set Shell "bash"
 Set FontSize 16
 Set Width 1400
-Set Height 900
+Set Height 1000
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 60ms
@@ -17,18 +17,14 @@ Type "vpn"
 Enter
 Sleep 4s
 Down
-Sleep 1200ms
+Sleep 1300ms
 Right
-Sleep 1200ms
+Sleep 1300ms
 Down
-Sleep 1200ms
+Sleep 1300ms
 Left
-Sleep 1200ms
+Sleep 1300ms
 Up
-Sleep 1000ms
-Tab
-Sleep 3500ms
-Escape
-Sleep 1200ms
+Sleep 1500ms
 Type "q"
 Sleep 800ms
