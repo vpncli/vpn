@@ -50,6 +50,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
     env:
       HAS_GPG: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+      HAS_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN != '' }}
       BUMP: ${{ github.event.inputs.bump || 'patch' }}
     steps:
       - uses: actions/checkout@v4
@@ -164,8 +165,10 @@ jobs:
             dist/*.deb
 
       # --- Homebrew tap ------------------------------------------------------
-      # Patches the formula's sha256 placeholders. To auto-push to the tap repo,
-      # add a step that clones vpncli/homebrew-tap with a PAT and copies Formula/vpn.rb.
+      # Fill in the version + sha256 placeholders, then push the formula to the
+      # tap repo so `brew upgrade` sees the new version. Pushing to ANOTHER repo
+      # needs a PAT with write access to vpncli/homebrew-tap, stored as the
+      # HOMEBREW_TAP_TOKEN secret (the default GITHUB_TOKEN can't reach it).
       - name: Patch formula checksums
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
@@ -175,7 +178,25 @@ jobs:
           sed -i "s/REPLACE_LINUX_ARM64/${{ steps.sums.outputs.vpn_linux_arm64 }}/" Formula/vpn.rb
           sed -i "s/REPLACE_LINUX_X64/${{ steps.sums.outputs.vpn_linux_x64 }}/" Formula/vpn.rb
 
+      - name: Publish formula to tap
+        if: env.HAS_TAP_TOKEN == 'true'
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/vpncli/homebrew-tap.git" tap
+          mkdir -p tap/Formula
+          cp Formula/vpn.rb tap/Formula/vpn.rb
+          cd tap
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/vpn.rb
+          git commit -m "vpn ${{ steps.ver.outputs.tag }}" || { echo "formula unchanged"; exit 0; }
+          git push
+
+      # Fallback when no tap token is set: grab the patched formula from the run's
+      # artifacts and commit it to vpncli/homebrew-tap by hand.
       - name: Upload patched formula
+        if: env.HAS_TAP_TOKEN != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: formula

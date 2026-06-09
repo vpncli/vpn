@@ -4,7 +4,7 @@
 #
 # The sha256 placeholders are filled in automatically by the release workflow.
 class Vpn < Formula
-  desc "Intuitive xray VPN manager: server profiles, routing presets, pretty TUI"
+  desc "Manage every VPN from your terminal: xray proxy plus full-tunnel apps"
   homepage "https://github.com/vpncli/vpn"
   version "0.1.0"
   license "MIT"
@@ -41,6 +41,6 @@ class Vpn < Formula
   end
 
   test do
-    assert_match "intuitive xray VPN manager", shell_output("#{bin}/vpn help")
+    assert_match "manage every VPN from your terminal", shell_output("#{bin}/vpn help")
   end
 end
