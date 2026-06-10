@@ -9,12 +9,15 @@ import type { RouteTarget } from "./core/types.ts";
 import {
   applyChange,
   cmdAdd,
+  cmdConnect,
+  cmdDisconnect,
   cmdInit,
   cmdIp,
   cmdList,
   cmdLog,
   cmdOff,
   cmdOn,
+  cmdServices,
   cmdPresetLs,
   cmdPresetOff,
   cmdPresetOn,
@@ -47,7 +50,12 @@ const cli = meow(
     // Pass the version explicitly: `import.meta`-based lookup fails inside the
     // bun-compiled single binary, so `vpn --version` would otherwise be empty.
     version: pkg.version,
-    flags: {},
+    flags: {
+      // Check Point credentials for non-interactive `vpn connect`.
+      user: { type: "string" },
+      password: { type: "string" },
+      otp: { type: "string" },
+    },
   },
 );
 
@@ -133,6 +141,22 @@ async function main(): Promise<void> {
       break;
     case "restart":
       cmdRestart();
+      break;
+
+    case "services":
+    case "svc":
+      cmdServices();
+      break;
+    case "connect":
+      if (!a) {
+        err("usage: vpn connect <service>   (run `vpn services` to list names)");
+        process.exitCode = 1;
+      } else {
+        await cmdConnect(a, cli.flags);
+      }
+      break;
+    case "disconnect":
+      await cmdDisconnect(a);
       break;
     case "status":
       await showStatus();

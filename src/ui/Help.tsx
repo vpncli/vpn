@@ -14,7 +14,7 @@ interface HelpSection {
   icon: string;
   title: string;
   /** Ink color name, also used for the ANSI fallback. */
-  accent: "cyan" | "green" | "magenta" | "yellow";
+  accent: "cyan" | "green" | "magenta" | "yellow" | "blue";
   items: HelpItem[];
 }
 
@@ -43,6 +43,16 @@ export const HELP_SECTIONS: HelpSection[] = [
       { usage: "ls", desc: "list servers (★ = active)" },
       { usage: "use [name]", desc: "switch active server (picker if no name)" },
       { usage: "show [name] · rm [name]", desc: "details · remove" },
+    ],
+  },
+  {
+    icon: "🛡",
+    title: "Tunnels",
+    accent: "blue",
+    items: [
+      { usage: "services", desc: "list detected VPNs (● = connected)" },
+      { usage: "connect <name>", desc: "connect an app-VPN (Check Point prompts for password + OTP)" },
+      { usage: "disconnect <name>|all", desc: "disconnect one or everything" },
     ],
   },
   {

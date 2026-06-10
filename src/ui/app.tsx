@@ -4,8 +4,10 @@ import React from "react";
 import { Box, render } from "ink";
 import { Banner } from "./Banner.tsx";
 import { CardSelect, type CardOption } from "./CardSelect.tsx";
+import { CheckpointConnectForm } from "./CheckpointForm.tsx";
 import { StatusDashboard } from "./StatusDashboard.tsx";
 import type { ServerProfile } from "../core/types.ts";
+import type { Service, Creds } from "../core/services.ts";
 
 const inkOpts = { exitOnCtrlC: true } as const;
 
@@ -51,6 +53,26 @@ export function pickPresets(items: CardOption<string>[]): Promise<string[] | und
         onCancel={() => {
           unmount();
           resolve(undefined);
+        }}
+      />,
+      inkOpts,
+    );
+  });
+}
+
+/** Prompt for Check Point credentials (username → password → OTP) from the CLI. */
+export function promptCheckpoint(service: Service): Promise<Creds | null> {
+  return new Promise((resolve) => {
+    const { unmount } = render(
+      <CheckpointConnectForm
+        service={service}
+        onSubmit={(creds) => {
+          unmount();
+          resolve(creds);
+        }}
+        onCancel={() => {
+          unmount();
+          resolve(null);
         }}
       />,
       inkOpts,

@@ -133,9 +133,10 @@ Each up service shows its country flag (geo of the exit IP), latency, and live �
 
 Corporate **Check Point Endpoint Security** normally means a clunky GUI plus a separate OTP app.
 `vpncli` detects the `trac` client and connects it **without leaving the terminal** — Enter on the
-Check Point card walks you through **username → password → one-time code**, then brings the tunnel
-up. It's a full tunnel, so connecting it drops the other tunnels — but your xray proxy keeps running
-on top, so per-rule routing still applies over the corporate link.
+Check Point card (or `vpn connect "Check Point"` from the shell) walks you through
+**username → password → one-time code**, then brings the tunnel up. It's a full tunnel, so connecting
+it drops the other tunnels — but your xray proxy keeps running on top, so per-rule routing still
+applies over the corporate link.
 
 <p align="center">
   <img src="docs/images/check-point.gif" alt="connecting Check Point with corporate password and OTP from the terminal" width="820">
@@ -178,13 +179,15 @@ Switch the whole interface between **English** and **Русский** on the fly
 
 ## Commands
 
-The xray side is fully scriptable — everything in the app is also a plain command. (App-VPNs and
-Check Point are managed interactively in the dashboard.)
+Everything in the app is also a plain command — including connecting the app-VPNs and Check Point.
 
 | | |
 |---|---|
 | `vpn` | interactive dashboard |
 | `vpn on` · `off` · `restart` | xray proxy: connect / disconnect / reconnect |
+| `vpn services` | list every detected VPN (● = connected) |
+| `vpn connect <name>` | connect an app-VPN / Check Point by name |
+| `vpn disconnect <name>\|all` | disconnect one service, or everything |
 | `vpn status` · `ip` · `log [N]` | live status · IPs · last log lines |
 | `vpn add <vless://…> [name]` | add a server |
 | `vpn ls` · `use [name]` · `show [name]` · `rm [name]` | manage servers |
@@ -192,6 +195,10 @@ Check Point are managed interactively in the dashboard.)
 | `vpn preset ls` · `preset on\|off [name…]` | toggle presets |
 | `vpn lang en\|ru` | set language |
 | `vpn init` | auto-source the proxy env in new terminals |
+
+`vpn connect "Check Point"` prompts for your password + OTP (input fields, no flags to type). For
+scripts, pass `--user`/`--password`/`--otp` (or set `VPN_PASSWORD`) to skip the prompt. Connecting a
+full tunnel disconnects the other tunnels but leaves your xray proxy running.
 
 <p align="center">
   <img src="docs/images/commands.gif" alt="vpn ls, on, ip, off from the command line" width="820">

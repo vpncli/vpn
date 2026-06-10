@@ -263,6 +263,7 @@ export interface Creds {
 
 /** Connect a service. xray/scutil are quick; Check Point needs creds (password + OTP). */
 export async function connectService(s: Service, creds?: Creds): Promise<string | null> {
+  if (isDemo()) return null; // demo recordings must not touch scutil/nmcli/trac/xray
   switch (s.kind) {
     case "xray": {
       setActive(s.name);
@@ -281,6 +282,7 @@ export async function connectService(s: Service, creds?: Creds): Promise<string 
 }
 
 export async function disconnectService(s: Service): Promise<string | null> {
+  if (isDemo()) return null;
   switch (s.kind) {
     case "xray":
       await turnOffAsync();
@@ -310,12 +312,14 @@ export async function switchXray(name: string): Promise<string | null> {
 
 /** Turn everything off: xray, every connected scutil service, Check Point. */
 export async function disconnectAll(): Promise<void> {
+  if (isDemo()) return;
   await turnOffAsync();
   await disconnectTunnels();
 }
 
 /** Stop every full tunnel (scutil/NM apps + Check Point) except `exceptId`; leaves xray. */
 async function disconnectTunnels(exceptId?: string): Promise<void> {
+  if (isDemo()) return;
   for (const s of scutilServices()) {
     if (s.status !== "down" && s.id !== exceptId) run("scutil", ["--nc", "stop", s.scutilId!]);
   }

@@ -8,6 +8,16 @@ import type { RouteTarget } from "./core/types.ts";
 import { addFromLink, getActive, getServer, listServers, removeServer, setActive } from "./core/servers.ts";
 import { addRule, ensureListFiles, fileFor, readList, removeRule } from "./core/routes.ts";
 import { disable, enable, listPresets } from "./core/presets.ts";
+import {
+  type Service,
+  type Creds,
+  listServices,
+  groupServices,
+  connectService,
+  connectExclusive,
+  disconnectService,
+  disconnectAll,
+} from "./core/services.ts";
 import { regenerate } from "./core/regen.ts";
 import { turnOff, turnOn, restart as restartVpn } from "./core/lifecycle.ts";
 import { ensureShellInit } from "./core/shellinit.ts";
@@ -16,6 +26,7 @@ import { isRunning } from "./core/xray.ts";
 import { VlessParseError } from "./core/vless.ts";
 import { t } from "./core/i18n.ts";
 import { plainHelp, showHelp } from "./ui/Help.tsx";
+import { promptCheckpoint } from "./ui/app.tsx";
 
 /** Regenerate config after a routing/server change; restart xray if it is running. */
 export function applyChange(): void {
@@ -262,6 +273,109 @@ export function cmdInit(): void {
     info("New terminals will pick up the proxy automatically when the VPN is on.");
   } else {
     warn(`Already configured in ${res.rc}`);
+  }
+}
+
+// --- Third-party tunnels (app-VPNs + Check Point) over the CLI ---------------
+
+const normalize = (s: string): string => s.toLowerCase().replace(/[\s_-]+/g, "");
+
+/** Find a detected service by name or type (case/space/dash-insensitive; "cp" → Check Point). */
+function findService(query: string): Service | undefined {
+  const q = normalize(query) === "cp" ? "checkpoint" : normalize(query);
+  const services = listServices();
+  return (
+    services.find((s) => normalize(s.name) === q || normalize(s.type) === q) ??
+    services.find((s) => normalize(s.name).includes(q) || normalize(s.type).includes(q))
+  );
+}
+
+/** List every detected VPN service with its status — the names `connect`/`disconnect` take. */
+export function cmdServices(): void {
+  const groups = groupServices(listServices());
+  if (groups.length === 0) {
+    warn("No VPN services detected.");
+    return;
+  }
+  console.log(c.bold("\n  VPN services"));
+  for (const g of groups) {
+    for (const s of g.items) {
+      const dot = s.status === "up" ? c.green("●") : s.status === "connecting" ? c.yellow("◐") : c.gray("○");
+      const kind = g.fullTunnel ? c.gray("tunnel") : c.gray("proxy ");
+      console.log(`  ${dot} ${c.bold(s.name.padEnd(20))} ${c.gray(s.type.padEnd(14))} ${kind}`);
+    }
+  }
+  console.log(c.gray("\n  Connect:  vpn connect <name>      Disconnect:  vpn disconnect <name>|all\n"));
+}
+
+/** Connect a detected service by name. Full tunnels are exclusive; Check Point needs creds. */
+export async function cmdConnect(
+  query: string,
+  flags: { user?: string; password?: string; otp?: string } = {},
+): Promise<void> {
+  const s = findService(query);
+  if (!s) {
+    err(`No VPN service matching "${query}". See: ${c.bold("vpn services")}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  let creds: Creds | undefined;
+  if (s.kind === "checkpoint") {
+    // Explicit flags (or VPN_PASSWORD) for scripting; otherwise prompt with input
+    // fields. Piped/no-TTY without flags can't prompt — say so.
+    const flagPassword = flags.password ?? process.env.VPN_PASSWORD;
+    if (flagPassword) {
+      creds = { user: flags.user ?? s.user, password: flagPassword, otp: flags.otp };
+    } else if (process.stdin.isTTY) {
+      const prompted = await promptCheckpoint(s);
+      if (!prompted) {
+        warn("Cancelled.");
+        return;
+      }
+      creds = prompted;
+    } else {
+      err(`${s.type} needs credentials. Run in a terminal to be prompted, or pass ${c.bold("--password")} / ${c.bold("--otp")}.`);
+      process.exitCode = 1;
+      return;
+    }
+  }
+
+  info(`Connecting ${c.bold(s.name)} ${c.gray(`(${s.type})`)}…`);
+  const msg = s.fullTunnel ? await connectExclusive(s, creds) : await connectService(s, creds);
+  if (msg) {
+    err(msg);
+    process.exitCode = 1;
+  } else {
+    ok(`Connected ${c.bold(s.name)}`);
+  }
+}
+
+/** Disconnect one service by name, or everything with `all`. */
+export async function cmdDisconnect(query?: string): Promise<void> {
+  if (!query || normalize(query) === "all") {
+    info("Disconnecting every VPN service…");
+    await disconnectAll();
+    ok("All VPN services disconnected");
+    return;
+  }
+  const s = findService(query);
+  if (!s) {
+    err(`No VPN service matching "${query}". See: ${c.bold("vpn services")}`);
+    process.exitCode = 1;
+    return;
+  }
+  if (s.status === "down") {
+    warn(`${c.bold(s.name)} is not connected`);
+    return;
+  }
+  info(`Disconnecting ${c.bold(s.name)} ${c.gray(`(${s.type})`)}…`);
+  const msg = await disconnectService(s);
+  if (msg) {
+    err(msg);
+    process.exitCode = 1;
+  } else {
+    ok(`Disconnected ${c.bold(s.name)}`);
   }
 }
 
