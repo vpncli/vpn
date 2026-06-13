@@ -1,15 +1,15 @@
 Package: vpn
-Version: 1.0.3
+Version: 1.0.4
 Architecture: amd64
 Maintainer: vpncli <vpncli@users.noreply.github.com>
 Homepage: https://github.com/vpncli/vpn
 Priority: optional
 Section: net
-Filename: pool/main/v/vpn/vpn_1.0.3_amd64.deb
-Size: 27640492
-SHA256: 5590cace7b2ed0337629d0ea779fb809c2112fb0863c7390acf6d8f58bfd692b
-SHA1: 0b5108215b244e7b4ea5b040c69e7cc0c0145eb1
-MD5sum: bf5d69aeed988c2b425bc836bd7ce9e1
+Filename: pool/main/v/vpn/vpn_1.0.4_amd64.deb
+Size: 27648316
+SHA256: 01ad841cda8447a43beef9f0c2007fac1038eb64e35ecb02768c2b09c5e863d2
+SHA1: b9892b0fb27e1176d6a65ad0d5caaa48127820fa
+MD5sum: cfe5157a1da09cb23ac419f9fe3a5d89
 Description: Intuitive xray VPN manager
  vpn drives xray from a friendly CLI/TUI: add servers from vless://
  share links, switch between them, and shape routing with simple presets
