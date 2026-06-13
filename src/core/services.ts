@@ -44,6 +44,10 @@ export interface Service {
   /** Check Point username (prefill for the connect form). */
   user?: string;
   note?: string;
+  /** xray: name of the subscription this server belongs to (if any). */
+  subscription?: string;
+  /** ISO country code from the server label's flag (xray subscriptions); drives the flag. */
+  countryCode?: string;
 }
 
 const BUNDLE_TYPE: Record<string, string> = {
@@ -73,6 +77,8 @@ export function xrayServices(): Service[] {
     status: s.name === active && running ? "up" : "down",
     host: s.address,
     port: s.port,
+    subscription: s.subscription,
+    countryCode: s.countryCode,
   }));
 }
 

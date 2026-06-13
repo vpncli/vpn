@@ -45,6 +45,7 @@ import {
   setActive,
 } from "../core/servers.ts";
 import { addRule, removeRule } from "../core/routes.ts";
+import { addSubscription, refreshSubscriptions, removeSubscription, renameSubscription } from "../core/subscriptions.ts";
 import { getEnabled, setEnabled } from "../core/presets.ts";
 import { parseVless } from "../core/vless.ts";
 import { reapplyAsync } from "../core/lifecycle.ts";
@@ -60,6 +61,7 @@ type Screen =
   | { t: "servers" }
   | { t: "serverDetail"; name: string }
   | { t: "renameServer"; name: string }
+  | { t: "renameSub"; name: string }
   | { t: "addServer" }
   | { t: "routing" }
   | { t: "presets" }
@@ -245,26 +247,46 @@ function tailLog(n = 40): string[] {
   return readFileSync(paths.log, "utf8").split("\n").filter(Boolean).slice(-n);
 }
 
-/** Two-step add: paste vless:// link, then name it. */
-function AddServerFlow({ onDone, onCancel }: { onDone: (link: string, name: string) => void; onCancel: () => void }): React.JSX.Element {
+/**
+ * Add a VPN from one input: paste a `vless://` link (then name the single server)
+ * or any subscription URL / app deep-link (fetched whole, adds every server).
+ * The input auto-detects which one you pasted.
+ */
+function AddServerFlow({
+  onDone,
+  onSubscription,
+  onCancel,
+}: {
+  onDone: (link: string, name: string) => void;
+  onSubscription: (input: string) => void;
+  onCancel: () => void;
+}): React.JSX.Element {
   const [link, setLink] = useState<string | null>(null);
   const [defaultName, setDefaultName] = useState("server");
   const [error, setError] = useState<string | null>(null);
 
+  // Step 1: one field for both — a vless link names a single server, anything else
+  // is treated as a subscription URL.
   if (link === null) {
     return (
       <TextInput
         key="add-link"
-        label={t("+ Add server — paste a vless:// link")}
+        label={t("Paste a vless:// link or subscription URL")}
         error={error}
-        placeholder="vless://uuid@host:port?...#name"
+        placeholder="vless://…  ·  https://…  ·  happ://add/…"
         onCancel={onCancel}
         onSubmit={(v) => {
+          const raw = v.trim();
+          if (!raw) return;
+          if (!raw.startsWith("vless://")) {
+            onSubscription(raw); // subscription link / deep-link / redirect
+            return;
+          }
           try {
-            const p = parseVless(v);
+            const p = parseVless(raw);
             setDefaultName(p.name);
             setError(null);
-            setLink(v);
+            setLink(raw);
           } catch (e) {
             setError((e as Error).message);
           }
@@ -273,13 +295,14 @@ function AddServerFlow({ onDone, onCancel }: { onDone: (link: string, name: stri
     );
   }
 
+  // Step 2 (single server only): name it.
   return (
     <TextInput
       key="add-name"
       label={t("Name this server")}
       initialValue={defaultName}
       placeholder="my-server"
-      onCancel={onCancel}
+      onCancel={() => setLink(null)}
       onSubmit={(name) => onDone(link, name || defaultName)}
     />
   );
@@ -302,7 +325,7 @@ function App(): React.JSX.Element {
   const screenKey = (s: Screen): string =>
     s.t === "routeList" || s.t === "addRule"
       ? `${s.t}:${s.target}`
-      : s.t === "serverDetail" || s.t === "renameServer"
+      : s.t === "serverDetail" || s.t === "renameServer" || s.t === "renameSub"
         ? `${s.t}:${s.name}`
         : s.t;
 
@@ -404,6 +427,13 @@ function App(): React.JSX.Element {
         onEditServer={(name) => push({ t: "serverDetail", name })}
         onAddServer={() => push({ t: "addServer" })}
         onOpenRoutes={() => push({ t: "routing" })}
+        onRenameSub={(name) => push({ t: "renameSub", name })}
+        onDeleteSub={(name) =>
+          void run(t("removing subscription…"), async () => {
+            removeSubscription(name);
+            return getActive() ? ((await reapplyAsync()).error ?? null) : null;
+          })
+        }
         onBack={pop}
       />
     );
@@ -559,6 +589,28 @@ function App(): React.JSX.Element {
     );
   }
 
+  function renameSubScreen(name: string): React.JSX.Element {
+    return (
+      <TextInput
+        label={t("Rename subscription “{name}”", { name })}
+        initialValue={name}
+        placeholder={t("new name")}
+        onCancel={pop}
+        onSubmit={(newName) => {
+          if (!newName || newName === name) return pop();
+          void run(t("renaming…"), async () => {
+            try {
+              renameSubscription(name, newName);
+            } catch (e) {
+              return (e as Error).message;
+            }
+            return null;
+          }, pop);
+        }}
+      />
+    );
+  }
+
   function languageScreen(): React.JSX.Element {
     const cur = getLang();
     const items: CardOption<Lang>[] = [
@@ -630,6 +682,8 @@ function App(): React.JSX.Element {
         return serverDetailScreen(cur.name);
       case "renameServer":
         return renameScreen(cur.name);
+      case "renameSub":
+        return renameSubScreen(cur.name);
       case "addServer":
         return (
           <AddServerFlow
@@ -638,6 +692,16 @@ function App(): React.JSX.Element {
               void run(t("adding server…"), async () => {
                 try {
                   addFromLink(link, name);
+                } catch (e) {
+                  return (e as Error).message;
+                }
+                return (await reapplyAsync()).error ?? null;
+              }, pop)
+            }
+            onSubscription={(input) =>
+              void run(t("adding subscription…"), async () => {
+                try {
+                  await addSubscription(input);
                 } catch (e) {
                   return (e as Error).message;
                 }
@@ -710,6 +774,8 @@ function resizeWindow(cols: number, rows: number): void {
 /** Mount the interactive app and resolve when the user quits. */
 export async function runApp(): Promise<void> {
   resizeWindow(100, 55);
+  // Refresh subscription server lists in the background on launch (no xray restart).
+  void refreshSubscriptions();
   const instance = render(<App />, { exitOnCtrlC: true });
   await instance.waitUntilExit();
   // Clear the screen + scrollback on exit so the frozen last frame doesn't linger.

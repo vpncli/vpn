@@ -68,7 +68,7 @@ export function ServerCards({
       </Text>
       <Box>
         <Text color={i === 0 ? "cyan" : "gray"}>{i === 0 ? "❯ " : "  "}</Text>
-        <Text bold={i === 0}>{t("+ Add server")}</Text>
+        <Text bold={i === 0}>{t("+ Add server or subscription")}</Text>
       </Box>
       {servers.map((s, idx) => (
         <ServerCard key={s.name} s={s} active={s.name === activeName} focused={i === idx + 1} />

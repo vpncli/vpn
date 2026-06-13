@@ -29,10 +29,16 @@ import {
   cmdRouteLs,
   cmdRouteRm,
   cmdShow,
+  cmdSubAdd,
+  cmdSubLs,
+  cmdSubRename,
+  cmdSubRm,
+  cmdSubUpdate,
   cmdUse,
   runHelp,
 } from "./commands.ts";
 import { getLang, setLang } from "./core/i18n.ts";
+import { CHECK_ENV, maybeScheduleCheck, notifyUpdate, runUpdateCheck } from "./core/update.ts";
 import { getActive, listServers } from "./core/servers.ts";
 import { listPresets, setEnabled } from "./core/presets.ts";
 import { pickPresets, pickServer, showStatus } from "./ui/app.tsx";
@@ -123,8 +129,53 @@ async function presetDispatch(sub: string | undefined, names: string[]): Promise
   process.exitCode = 1;
 }
 
+async function subDispatch(sub?: string, arg?: string, arg2?: string): Promise<void> {
+  if (!sub) {
+    err("usage: vpn sub add <url> [name] · ls · update [name] · rm <name>");
+    process.exitCode = 1;
+    return;
+  }
+  if (sub === "ls" || sub === "list") return cmdSubLs();
+  if (sub === "update" || sub === "refresh") return cmdSubUpdate(arg);
+  if (sub === "rm" || sub === "remove") {
+    if (!arg) {
+      err("usage: vpn sub rm <name>");
+      process.exitCode = 1;
+      return;
+    }
+    return cmdSubRm(arg);
+  }
+  if (sub === "rename" || sub === "mv") {
+    if (!arg || !arg2) {
+      err("usage: vpn sub rename <name> <new-name>");
+      process.exitCode = 1;
+      return;
+    }
+    return cmdSubRename(arg, arg2);
+  }
+  if (sub === "add") {
+    if (!arg) {
+      err("usage: vpn sub add <url> [name]");
+      process.exitCode = 1;
+      return;
+    }
+    return cmdSubAdd(arg, arg2);
+  }
+  // `vpn sub <url> [name]` — no subcommand, treat the first arg as the URL.
+  return cmdSubAdd(sub, arg);
+}
+
 async function main(): Promise<void> {
+  // Detached background refresh of the update cache (see core/update.ts): do the
+  // network fetch and exit before touching anything else.
+  if (process.env[CHECK_ENV] === "1") {
+    await runUpdateCheck();
+    return;
+  }
+
   ensureDirs();
+  // Kick off a (throttled, non-blocking) background check for the next run.
+  maybeScheduleCheck();
   const [cmd, a, b, d] = cli.input;
 
   switch (cmd) {
@@ -176,9 +227,19 @@ async function main(): Promise<void> {
 
     case "add":
       if (!a) {
-        err("usage: vpn add <vless://...> [name]");
+        err("usage: vpn add <vless://...> [name]   ·   vpn add <subscription-url>");
         process.exitCode = 1;
-      } else cmdAdd(a, b);
+      } else if (a.startsWith("vless://")) {
+        cmdAdd(a, b);
+      } else {
+        // Not a vless link → treat as a subscription URL / app deep-link.
+        await cmdSubAdd(a, b);
+      }
+      break;
+    case "sub":
+    case "subscription":
+    case "subscriptions":
+      await subDispatch(a, b, d);
       break;
     case "ls":
     case "servers":
@@ -221,6 +282,9 @@ async function main(): Promise<void> {
       await runHelp();
       process.exitCode = 1;
   }
+
+  // After the command's own output: surface a pending update, if any.
+  notifyUpdate(pkg.version);
 }
 
 main().catch((e) => {

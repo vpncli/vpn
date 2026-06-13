@@ -1,4 +1,4 @@
-# xray panel: real vs VPN IP, server cards with country flags + live ping
+# xray panel: real vs VPN IP, loose servers + a subscription block (📡) you Tab into
 Output docs/images/xray-panel.gif
 Set Shell "bash"
 Set FontSize 16
@@ -20,13 +20,19 @@ Down
 Sleep 900ms
 Tab
 Sleep 3500ms
+Down
+Sleep 2200ms
+Tab
+Sleep 3500ms
 Right
 Sleep 1200ms
 Down
-Sleep 1500ms
-Left
 Sleep 1200ms
-Escape
-Sleep 900ms
+Right
+Sleep 1400ms
+Enter
+Sleep 2800ms
+Type "q"
+Sleep 1000ms
 Type "q"
 Sleep 800ms

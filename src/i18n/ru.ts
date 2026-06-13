@@ -20,14 +20,18 @@ export const ru: Record<string, string> = {
   Settings: "Настройки",
   "Manage routing": "Управление маршрутами",
   "Add server": "Добавить сервер",
+  "Add server or subscription": "Добавить сервер или подписку",
   "↵ connect": "↵ подключить",
   "↵ disconnect": "↵ отключить",
   "↵ active": "↵ активен",
   "↵ switch": "↵ выбрать",
   "⇥ configure": "⇥ настроить",
+  servers: "серверов",
+  "Tab to pick a server": "Tab — выбрать сервер",
   "⇥ manage routing": "⇥ управление маршрутами",
   "⇥ open": "⇥ открыть",
   "↵ add server": "↵ добавить сервер",
+  "↵ add server / subscription": "↵ добавить сервер / подписку",
   "↵ settings": "↵ настройки",
   "↵ add rule": "↵ добавить правило",
   "⌫ remove": "⌫ удалить",
@@ -74,6 +78,7 @@ export const ru: Record<string, string> = {
 
   // Busy labels
   "adding server…": "добавление сервера…",
+  "adding subscription…": "добавление подписки…",
   "activating {name}…": "активация {name}…",
   "removing {name}…": "удаление {name}…",
   "applying presets…": "применение пресетов…",
@@ -84,9 +89,12 @@ export const ru: Record<string, string> = {
   // Servers
   Servers: "Серверы",
   "+ Add server": "+ Добавить сервер",
+  "+ Add server or subscription": "+ Добавить сервер или подписку",
   "↑↓/ws move · Enter open · q/Esc back": "↑↓/ws выбор · Enter открыть · q/Esc назад",
   "★ active": "★ активен",
   "ping…": "пинг…",
+  ping: "пинг",
+  "pinging…": "пингую…",
   offline: "недоступен",
 
   // Server detail
@@ -98,10 +106,24 @@ export const ru: Record<string, string> = {
 
   // Rename
   "Rename “{name}”": "Переименовать «{name}»",
+  "Rename subscription “{name}”": "Переименовать подписку «{name}»",
   "new name": "новое имя",
+  "Rename subscription": "Переименовать подписку",
+  "Delete subscription": "Удалить подписку",
+  "↵ rename": "↵ переименовать",
+  "↵ delete subscription": "↵ удалить подписку",
+  "removing subscription…": "удаление подписки…",
 
   // Add server flow
   "+ Add server — paste a vless:// link": "+ Добавить сервер — вставьте vless:// ссылку",
+  "Add a VPN": "Добавить VPN",
+  "Single server": "Отдельный сервер",
+  Subscription: "Подписка",
+  "paste a vless:// link": "вставьте vless:// ссылку",
+  "paste a subscription link — adds every server": "вставьте ссылку подписки — добавит все серверы",
+  "Paste a vless:// link": "Вставьте vless:// ссылку",
+  "Paste a vless:// link or subscription URL": "Вставьте vless:// ссылку или URL подписки",
+  "Paste a subscription URL": "Вставьте URL подписки",
   "Name this server": "Название сервера",
 
   // Routing
@@ -178,4 +200,9 @@ export const ru: Record<string, string> = {
 
   // Shared widget hints
   "Enter submit · Esc cancel · Ctrl-U clear": "Enter принять · Esc отмена · Ctrl-U очистить",
+
+  // Update notifier
+  "vpn {latest} is available — you have {current}":
+    "доступна новая версия vpn {latest} — у вас {current}",
+  "update:": "обновитесь:",
 };

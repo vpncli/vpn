@@ -30,6 +30,22 @@ export async function icmpPing(host: string, timeoutSec = 2): Promise<number | n
  * Measure the TCP handshake time to host:port in milliseconds.
  * Resolves null if the connection fails or times out (server unreachable).
  */
+/**
+ * Like {@link tcpPing} but de-duplicates probes across callers: a result for the
+ * same host:port is reused for `ttlMs`. Lets the collapsed subscription block and
+ * the per-server cards share one probe instead of each pinging independently.
+ */
+const pingCache = new Map<string, { t: number; p: Promise<number | null> }>();
+export function cachedTcpPing(host: string, port: number, timeoutMs = 2000, ttlMs = 5000): Promise<number | null> {
+  const key = `${host}:${port}`;
+  const now = Date.now();
+  const hit = pingCache.get(key);
+  if (hit && now - hit.t < ttlMs) return hit.p;
+  const p = tcpPing(host, port, timeoutMs);
+  pingCache.set(key, { t: now, p });
+  return p;
+}
+
 export function tcpPing(host: string, port: number, timeoutMs = 2000): Promise<number | null> {
   if (isDemo()) return Promise.resolve(demoPing(host));
   return new Promise((resolve) => {

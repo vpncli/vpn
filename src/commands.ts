@@ -18,6 +18,7 @@ import {
   disconnectService,
   disconnectAll,
 } from "./core/services.ts";
+import { addSubscription, updateSubscription, removeSubscription, renameSubscription, listSubscriptions } from "./core/subscriptions.ts";
 import { regenerate } from "./core/regen.ts";
 import { turnOff, turnOn, restart as restartVpn } from "./core/lifecycle.ts";
 import { ensureShellInit } from "./core/shellinit.ts";
@@ -57,6 +58,76 @@ export function cmdAdd(link: string, name?: string): void {
   } catch (e) {
     if (e instanceof VlessParseError) err(`Could not parse link: ${e.message}`);
     else err((e as Error).message);
+    process.exitCode = 1;
+  }
+}
+
+// --- Subscriptions ----------------------------------------------------------
+
+export async function cmdSubAdd(input: string, name?: string): Promise<void> {
+  try {
+    info("Fetching subscription…");
+    const r = await addSubscription(input, name);
+    ok(`Subscription ${c.bold(r.name)} — added ${c.bold(String(r.added.length))} server(s)` + (r.skipped ? c.gray(` (skipped ${r.skipped})`) : ""));
+    for (const n of r.added) console.log(`    ${c.gray("•")} ${n}`);
+    info(`Refresh later: ${c.bold(`vpn sub update ${r.name}`)}`);
+    applyChange();
+  } catch (e) {
+    err((e as Error).message);
+    process.exitCode = 1;
+  }
+}
+
+export function cmdSubLs(): void {
+  const subs = listSubscriptions();
+  if (subs.length === 0) {
+    warn("No subscriptions. Add one: " + c.bold("vpn sub add <url>"));
+    return;
+  }
+  console.log(c.bold("\n  Subscriptions"));
+  for (const s of subs) {
+    console.log(`  ${c.bold(s.name.padEnd(20))} ${c.gray(`${s.servers.length} servers · updated ${s.updatedAt.slice(0, 10)}`)}`);
+    console.log(`    ${c.gray(s.url)}`);
+  }
+  console.log("");
+}
+
+export async function cmdSubUpdate(name?: string): Promise<void> {
+  try {
+    info(name ? `Refreshing ${c.bold(name)}…` : "Refreshing all subscriptions…");
+    const results = await updateSubscription(name);
+    if (results.length === 0) {
+      warn("No subscriptions to update.");
+      return;
+    }
+    for (const r of results) {
+      ok(`Updated ${c.bold(r.name)} — ${c.bold(String(r.added.length))} server(s)` + (r.skipped ? c.gray(` (skipped ${r.skipped})`) : ""));
+    }
+    applyChange();
+  } catch (e) {
+    err((e as Error).message);
+    process.exitCode = 1;
+  }
+}
+
+export function cmdSubRm(name: string): void {
+  try {
+    const n = removeSubscription(name);
+    ok(`Removed subscription ${c.bold(name)} (${n} server${n === 1 ? "" : "s"})`);
+    if (getActive()) applyChange();
+  } catch (e) {
+    err((e as Error).message);
+    process.exitCode = 1;
+  }
+}
+
+export function cmdSubRename(oldName: string, newName: string): void {
+  try {
+    const final = renameSubscription(oldName, newName);
+    ok(`Renamed subscription ${c.bold(oldName)} → ${c.bold(final)}`);
+    if (getActive()) applyChange();
+  } catch (e) {
+    err((e as Error).message);
     process.exitCode = 1;
   }
 }

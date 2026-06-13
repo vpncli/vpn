@@ -39,6 +39,17 @@ function asNetwork(v: string | null): Network {
   }
 }
 
+/**
+ * Extract an ISO 3166-1 alpha-2 country code from a flag emoji in a label
+ * (e.g. "🇩🇪 Германия PRO" → "DE"). Returns undefined if there's no flag.
+ */
+export function flagToCountryCode(label: string): string | undefined {
+  const m = label.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
+  if (!m) return undefined;
+  const cps = [...m[0]].map((ch) => ch.codePointAt(0)! - 0x1f1e6 + 65);
+  return cps.length === 2 ? String.fromCharCode(cps[0]!, cps[1]!) : undefined;
+}
+
 /** Slugify a fragment/name into a safe profile id usable as a filename. */
 export function slugifyName(raw: string): string {
   const slug = raw
@@ -96,6 +107,7 @@ export function parseVless(link: string, fallbackName?: string): ServerProfile {
     security,
     network,
     url: trimmed,
+    countryCode: flagToCountryCode(fragment),
   };
 
   if (security === "reality" || security === "tls") {

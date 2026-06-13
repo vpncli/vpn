@@ -22,10 +22,13 @@ export const paths = {
   presetsEnabled: join(root, "presets.enabled"),
   active: join(root, "active"),
   lang: join(root, "lang"),
+  subscriptions: join(root, "subscriptions.json"),
+  hwid: join(root, "hwid"),
   dns: join(root, "dns.json"),
   config: join(root, "config.json"),
   log: join(root, "xray.log"),
   proxyEnv: join(root, "proxy.env"),
+  updateCheck: join(root, "update-check.json"),
 
   serverFile(name: string): string {
     return join(root, "servers", `${name}.json`);

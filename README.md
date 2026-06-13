@@ -52,6 +52,7 @@ direct, the rest following the corporate tunnel. `vpncli` manages both from one 
 - 🧩 **Every VPN, one dashboard** — xray servers + full-tunnel app-VPNs, auto-detected and grouped by type
 - 🌐 **Tunnel vs proxy, clearly marked** — full tunnels capture all traffic; xray routes by rules and coexists
 - 🔌 **Connect / disconnect anything** — each service is a card; a master **Disconnect all** up top
+- 📡 **Subscriptions without the vendor app** — paste any subscription link (even a Happ / v2RayTun deep-link); vpncli fetches the whole server list. No closed-source client to install — it's **MIT-licensed**, so you can read and build every line that runs
 - 📊 **Live everything** — country flag, ping, and live up/down traffic per service
 - 🧭 **xray routing without the syntax** — a guided wizard + toggleable presets (direct / proxy / block)
 - ⌨️ **Keyboard-native** — arrows **or WASD** (incl. ЙЦУКЕН ц/ф/ы/в), **Tab** to dive in, **Enter** to act
@@ -145,7 +146,10 @@ applies over the corporate link.
 ### The xray panel
 
 **Tab** into the xray card for a focused panel: your real vs VPN IP up top, every server as a card
-(Enter switches, Tab edits/renames/removes), and a **Routing** widget.
+(Enter switches, Tab edits/renames/removes), and a **Routing** widget. Each **subscription** shows as
+its own block (📡 name · N servers) — **Tab** into it to pick a server. The panel re-fetches your
+subscriptions on open (and on launch), like a VPN client keeping its list current — without touching
+the running connection; switching servers is the only thing that restarts xray.
 
 <p align="center">
   <img src="docs/images/xray-panel.gif" alt="xray panel: real/VPN IP and server cards with flags + ping" width="820">
@@ -190,6 +194,8 @@ Everything in the app is also a plain command — including connecting the app-V
 | `vpn disconnect <name>\|all` | disconnect one service, or everything |
 | `vpn status` · `ip` · `log [N]` | live status · IPs · last log lines |
 | `vpn add <vless://…> [name]` | add a server |
+| `vpn add <subscription-url>` | add every server from a subscription / app deep-link |
+| `vpn sub ls` · `sub update [name]` · `sub rename <old> <new>` · `sub rm <name>` | manage subscriptions |
 | `vpn ls` · `use [name]` · `show [name]` · `rm [name]` | manage servers |
 | `vpn route ls` · `route add\|rm direct\|proxy\|block <rule>` · `route edit` | edit routing |
 | `vpn preset ls` · `preset on\|off [name…]` | toggle presets |
@@ -199,6 +205,32 @@ Everything in the app is also a plain command — including connecting the app-V
 `vpn connect "Check Point"` prompts for your password + OTP (input fields, no flags to type). For
 scripts, pass `--user`/`--password`/`--otp` (or set `VPN_PASSWORD`) to skip the prompt. Connecting a
 full tunnel disconnects the other tunnels but leaves your xray proxy running.
+
+**Subscriptions — without the app.** Providers usually hand you a subscription link and tell you to
+install *their* app (Happ, v2RayTun…) to use it. You don't have to. Paste that same link — even when
+it's wrapped in an app deep-link or redirect, e.g.
+`https://…/redirect?url=happ://add/https://provider.tld/sub/TOKEN` — into `vpn add` (or `vpn sub add`)
+and vpncli does exactly what the app would: unwraps it, fetches the list, and adds every server,
+grouped under one subscription. It reads both the **base64 `vless://`** format and the
+**xray / sing-box JSON** format those panels serve, and sends the stable per-machine **device id**
+(`x-hwid`) that HWID-gated panels (Remnawave) expect, so you get the real list (if the panel limits
+devices, free a slot in the provider's app/bot first).
+
+The difference: vpncli is **open source (MIT)**. Instead of trusting an opaque binary to decide what
+runs on your machine and where your traffic goes, you drive your subscription from one small CLI whose
+every line is on GitHub — read it, build it yourself, pin the version.
+
+```sh
+vpn add "happ://add/https://provider.tld/sub/TOKEN"   # or the bare https:// URL
+vpn sub ls                  # list subscriptions
+vpn sub update [name]       # re-fetch (refresh the server list)
+vpn sub rename <old> <new>  # rename a subscription
+vpn sub rm <name>           # remove the subscription and all its servers
+```
+
+In the app, each subscription is a block in the **xray panel** — Tab into it to pick a server, or
+**Rename** / **Delete** the whole subscription right there. The list re-fetches on launch and on
+opening the panel, without restarting your connection.
 
 <p align="center">
   <img src="docs/images/commands.gif" alt="vpn ls, on, ip, off from the command line" width="820">
@@ -234,6 +266,10 @@ curl -fsSL https://raw.githubusercontent.com/vpncli/vpn/main/install.sh | bash  
 
 `vpn` only ever stores plain config under `~/.config/vpn/`, so upgrades never touch your servers or
 routing. Check your version with `vpn --version`.
+
+When a newer release is out, `vpn` shows a one-line yellow notice with the upgrade command. The check
+runs in the background (at most once a day) and never slows a command down. Set `NO_UPDATE_NOTIFIER=1`
+to turn it off.
 
 ## Uninstalling
 

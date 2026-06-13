@@ -19,23 +19,25 @@ Sleep 4s
 Down
 Sleep 700ms
 Tab
-Sleep 2500ms
+Sleep 2800ms
 Down
-Sleep 600ms
+Sleep 500ms
 Down
-Sleep 1500ms
-Tab
-Sleep 2500ms
+Sleep 500ms
 Down
 Sleep 1200ms
 Tab
 Sleep 3000ms
-Escape
-Sleep 1200ms
 Tab
 Sleep 3000ms
 Escape
-Sleep 700ms
+Sleep 1200ms
+Down
+Sleep 900ms
+Tab
+Sleep 3000ms
+Escape
+Sleep 1000ms
 Escape
 Sleep 700ms
 Escape

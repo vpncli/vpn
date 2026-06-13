@@ -40,8 +40,9 @@ export const HELP_SECTIONS: HelpSection[] = [
     accent: "green",
     items: [
       { usage: "add <vless://…> [name]", desc: "add a server from a share link" },
-      { usage: "ls", desc: "list servers (★ = active)" },
-      { usage: "use [name]", desc: "switch active server (picker if no name)" },
+      { usage: "add <subscription-url>", desc: "add every server from a subscription / deep-link" },
+      { usage: "sub ls · update · rename · rm", desc: "list · refresh · rename · remove subscriptions" },
+      { usage: "ls · use [name]", desc: "list servers · switch active" },
       { usage: "show [name] · rm [name]", desc: "details · remove" },
     ],
   },

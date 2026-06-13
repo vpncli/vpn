@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Text } from "ink";
 import Spinner from "ink-spinner";
 import type { Service } from "../core/services.ts";
-import { tcpPing, icmpPing } from "../core/ping.ts";
+import { tcpPing, cachedTcpPing, icmpPing } from "../core/ping.ts";
 import { getStatsAsync } from "../core/stats.ts";
 import { getInterfaceIpAsync } from "../core/ip.ts";
 import { interfaceTraffic, type TunnelTraffic } from "../core/tunnels.ts";
@@ -22,7 +22,7 @@ function useServicePing(s: Service, exitIp: string | null): { ms: number | null;
       // xray: TCP handshake to the server. Tunnel apps mostly block ICMP, so once
       // we know the public exit IP, TCP-ping it (443); otherwise fall back to an
       // ICMP ping of the gateway (works for Check Point's public gateway).
-      if (s.kind === "xray" && s.host) v = await tcpPing(s.host, s.port ?? 443, 2500);
+      if (s.kind === "xray" && s.host) v = await cachedTcpPing(s.host, s.port ?? 443, 2500);
       else if (exitIp) v = await tcpPing(exitIp, 443, 2500);
       else if (s.gateway) v = await icmpPing(s.gateway);
       if (!alive) return;
@@ -114,7 +114,10 @@ export interface ServiceRowProps {
 export function ServiceRow({ service, focused, width, minHeight, badge, subtitle }: ServiceRowProps): React.JSX.Element {
   const exitIp = useExitIp(service);
   const ping = useServicePing(service, exitIp);
-  const geo = useGeo(exitIp || service.gateway || service.host || "");
+  // Subscription servers carry their country code (from the label flag) — reliable
+  // even when they share a front address that can't be geolocated. Fall back to geo.
+  const geo = useGeo(service.countryCode ? "" : exitIp || service.gateway || service.host || "");
+  const countryCode = service.countryCode || geo?.countryCode;
   const traffic = useServiceTraffic(service);
 
   const up = service.status === "up";
@@ -140,7 +143,7 @@ export function ServiceRow({ service, focused, width, minHeight, badge, subtitle
           ) : (
             <Text color={statusColor}>● </Text>
           )}
-          {geo ? <Text>{flagEmoji(geo.countryCode)} </Text> : null}
+          {countryCode ? <Text>{flagEmoji(countryCode)} </Text> : null}
           <Text bold color={up ? "white" : "gray"} wrap="truncate">
             {service.name}
           </Text>

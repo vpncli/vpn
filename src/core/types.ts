@@ -39,6 +39,13 @@ export interface ServerProfile {
 
   /** Original vless:// link, kept for reference/round-trip. */
   url: string;
+
+  /** Name of the subscription this server came from (managed as a group). */
+  subscription?: string;
+
+  /** ISO 3166-1 alpha-2 country code parsed from the server label's flag emoji (e.g. "DE").
+   *  Reliable for shared-front subscriptions where the address can't be geolocated. */
+  countryCode?: string;
 }
 
 /** A single routing rule with its destination. */

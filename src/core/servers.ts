@@ -75,13 +75,17 @@ export function addFromLink(link: string, name?: string): ServerProfile {
   return profile;
 }
 
-function uniqueName(base: string): string {
-  const existing = new Set(listNames());
-  if (!existing.has(base)) return base;
+/** Return `base`, or `base-2`, `base-3`, … — the first variant not already in `taken`. */
+export function dedupe(base: string, taken: ReadonlySet<string>): string {
+  if (!taken.has(base)) return base;
   for (let i = 2; ; i++) {
     const candidate = `${base}-${i}`;
-    if (!existing.has(candidate)) return candidate;
+    if (!taken.has(candidate)) return candidate;
   }
+}
+
+export function uniqueName(base: string): string {
+  return dedupe(base, new Set(listNames()));
 }
 
 /** Rename a server profile (moves its file, updates active). Returns the final name. */
