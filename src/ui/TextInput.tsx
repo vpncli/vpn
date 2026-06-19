@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Box, Text, useInput } from "ink";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 const FIELD_WIDTH = 52;
@@ -60,7 +61,7 @@ export function TextInput({
             {label}
           </Text>
         ) : null}
-        {description ? <Text color="gray">{description}</Text> : null}
+        {description ? <Text color={UI.muted}>{description}</Text> : null}
         {error ? (
           <Text color="red" wrap="truncate">
             ✖ {error}
@@ -69,7 +70,7 @@ export function TextInput({
         <Box justifyContent="space-between" marginTop={label || description || error ? 1 : 0}>
           <Box>
             <Text color="cyan">❯ </Text>
-            {value ? <Text>{shown}</Text> : <Text color="gray">{placeholder}</Text>}
+            {value ? <Text>{shown}</Text> : <Text color={UI.muted}>{placeholder}</Text>}
             <Text color="cyanBright">{caret ? "▌" : " "}</Text>
           </Box>
           {value ? (
@@ -79,7 +80,7 @@ export function TextInput({
           ) : null}
         </Box>
       </Box>
-      <Text color="gray">{`  ${t("Enter submit · Esc cancel · Ctrl-U clear")}`}</Text>
+      <Text color={UI.muted}>{`  ${t("Enter submit · Esc cancel · Ctrl-U clear")}`}</Text>
     </Box>
   );
 }

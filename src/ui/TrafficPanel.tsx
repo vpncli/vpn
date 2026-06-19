@@ -6,6 +6,7 @@ import Spinner from "ink-spinner";
 import { getStatsAsync, type ChannelTraffic, type Stats } from "../core/stats.ts";
 import { humanBytes, humanRate, flagEmoji } from "./format.ts";
 import { PingBadge, useGeo, usePing } from "./Ping.tsx";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 export interface ActiveServer {
@@ -30,7 +31,7 @@ function ServerHeader({ host, port }: ActiveServer): React.JSX.Element {
       <Text bold color="green">
         {geo ? geo.country : t("locating…")}
       </Text>
-      <Text color="gray">
+      <Text color={UI.muted}>
         {"  ·  "}
         {host}
         {"  ·  "}
@@ -101,7 +102,7 @@ function Channel({
 }: {
   icon: string;
   label: string;
-  color: string;
+  color?: string;
   total: ChannelTraffic;
   rate: ChannelTraffic;
 }): React.JSX.Element {
@@ -116,13 +117,13 @@ function Channel({
         <Text color="green">↑ {humanBytes(total.up)}</Text>
       </Box>
       <Box width={13}>
-        <Text color="gray">{humanRate(rate.up)}</Text>
+        <Text color={UI.muted}>{humanRate(rate.up)}</Text>
       </Box>
       <Box width={12}>
         <Text color="cyan">↓ {humanBytes(total.down)}</Text>
       </Box>
       <Box>
-        <Text color="gray">{humanRate(rate.down)}</Text>
+        <Text color={UI.muted}>{humanRate(rate.down)}</Text>
       </Box>
     </Box>
   );
@@ -150,11 +151,11 @@ export function TrafficPanel({ server }: { server?: ActiveServer }): React.JSX.E
         </Box>
       )}
       <Box>
-        <Text color="gray">  {t("traffic this session")}</Text>
+        <Text color={UI.muted}>  {t("traffic this session")}</Text>
       </Box>
       <Channel icon="🌍" label="VPN" color="magenta" total={proxy} rate={rates.proxy} />
       <Channel icon="🏃" label={t("Direct")} color="yellow" total={direct} rate={rates.direct} />
-      <Channel icon="Σ" label={t("Total")} color="white" total={total} rate={{ up: rates.proxy.up + rates.direct.up, down: rates.proxy.down + rates.direct.down }} />
+      <Channel icon="Σ" label={t("Total")} color={undefined} total={total} rate={{ up: rates.proxy.up + rates.direct.up, down: rates.proxy.down + rates.direct.down }} />
     </Box>
   );
 }

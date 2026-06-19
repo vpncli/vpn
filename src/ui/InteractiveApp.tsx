@@ -13,6 +13,7 @@ import { XrayPanel } from "./XrayPanel.tsx";
 import { CheckpointConnectForm } from "./CheckpointForm.tsx";
 import { ServiceRow } from "./ServiceRow.tsx";
 import { Button } from "./Button.tsx";
+import { UI } from "./theme.ts";
 import { BottomHint } from "./Hint.tsx";
 import { CardGrid } from "./CardGrid.tsx";
 import { CARD_WIDTH, CARD_HEIGHT, useTerminalWidth, columnsFor, gridRows, moveSel, arrowDir } from "./grid.ts";
@@ -204,7 +205,7 @@ function ServicesView({
     <Box flexDirection="column">
       <PowerButton anyUp={anyUp} xrayName={xrayName} focused={clampedSel === 0} />
       {groups.length === 0 ? (
-        <Text color="gray">{`  ${t("No VPN services detected.")}`}</Text>
+        <Text color={UI.muted}>{`  ${t("No VPN services detected.")}`}</Text>
       ) : (
         <Box marginTop={1}>
           <CardGrid
@@ -239,7 +240,7 @@ function BackCatcher({ onBack }: { onBack: () => void }): React.JSX.Element {
   useInput((input, key) => {
     if (key.escape || input === "q") onBack();
   });
-  return <Text color="gray">  {t("q/Esc back")}</Text>;
+  return <Text color={UI.muted}>  {t("q/Esc back")}</Text>;
 }
 
 function tailLog(n = 40): string[] {
@@ -486,7 +487,7 @@ function App(): React.JSX.Element {
           {rows.map(([k, v], i) => (
             <Box key={i}>
               <Box width={10}>
-                <Text color="gray">{k}</Text>
+                <Text color={UI.muted}>{k}</Text>
               </Box>
               <Text>{v}</Text>
             </Box>
@@ -636,13 +637,13 @@ function App(): React.JSX.Element {
     const lines = tailLog(40);
     return (
       <Box flexDirection="column">
-        <Box flexDirection="column" borderStyle="round" borderColor="gray" paddingX={1}>
+        <Box flexDirection="column" borderStyle="round" borderColor={UI.border} paddingX={1}>
           <Text bold>{t("xray log (last {n})", { n: lines.length })}</Text>
           {lines.length === 0 ? (
-            <Text color="gray">{t("empty")}</Text>
+            <Text color={UI.muted}>{t("empty")}</Text>
           ) : (
             lines.map((l, i) => (
-              <Text key={i} color="gray">
+              <Text key={i} color={UI.muted}>
                 {l}
               </Text>
             ))

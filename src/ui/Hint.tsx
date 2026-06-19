@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Box, Text } from "ink";
+import { UI } from "./theme.ts";
 
 export function Hint({
   parts,
@@ -26,7 +27,7 @@ export function BottomHint({ hint, nav }: { hint?: string[]; nav: string }): Rea
   return (
     <Box marginTop={1} flexDirection="column">
       {hint && hint.length ? <Hint parts={hint} /> : null}
-      <Text color="gray">{`  ${nav}`}</Text>
+      <Text color={UI.muted}>{`  ${nav}`}</Text>
     </Box>
   );
 }

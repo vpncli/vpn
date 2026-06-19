@@ -5,6 +5,7 @@ import { Text } from "ink";
 import Spinner from "ink-spinner";
 import { tcpPing } from "../core/ping.ts";
 import { geolocate, type Geo } from "../core/geo.ts";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 export interface PingState {
@@ -61,7 +62,7 @@ export function pingColor(ms: number | null): string {
 export function PingBadge({ ms, loading }: PingState): React.JSX.Element {
   if (loading)
     return (
-      <Text color="gray">
+      <Text color={UI.muted}>
         <Spinner type="dots" /> {t("ping…")}
       </Text>
     );

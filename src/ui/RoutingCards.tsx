@@ -10,6 +10,7 @@ import { Button } from "./Button.tsx";
 import { CardGrid } from "./CardGrid.tsx";
 import { BottomHint } from "./Hint.tsx";
 import { CARD_WIDTH, useCardNav } from "./grid.ts";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 const NAV = "↑↓←→/wasd navigate · q/Esc back";
@@ -56,13 +57,13 @@ export function RouteTargets({ onOpen, onBack }: { onOpen: (key: string) => void
               <Widget focused={cur === i} width={CARD_WIDTH} minHeight={7} color={color}>
                 <Text bold color={color}>{`${ti.title} (${count})`}</Text>
                 {count === 0 ? (
-                  <Text color="gray">—</Text>
+                  <Text color={UI.muted}>—</Text>
                 ) : (
                   items.slice(0, 3).map((r, k) => (
-                    <Text key={k} color="gray" wrap="truncate">{`  ${r}`}</Text>
+                    <Text key={k} color={UI.muted} wrap="truncate">{`  ${r}`}</Text>
                   ))
                 )}
-                {count > 3 ? <Text color="gray">{`  …+${count - 3}`}</Text> : null}
+                {count > 3 ? <Text color={UI.muted}>{`  …+${count - 3}`}</Text> : null}
               </Widget>
             );
           }}
@@ -117,7 +118,7 @@ export function RouteRules({
         </Box>
       ) : (
         <Box marginTop={1}>
-          <Text color="gray">{`  ${t("No rules yet.")}`}</Text>
+          <Text color={UI.muted}>{`  ${t("No rules yet.")}`}</Text>
         </Box>
       )}
       <Box marginTop={1}>
@@ -155,11 +156,11 @@ export function PresetCards({
           render={(i) => {
             const p = presets[i]!;
             return (
-              <Widget focused={cur === i} width={CARD_WIDTH} minHeight={4} color={p.enabled ? "green" : "gray"}>
-                <Text bold color={p.enabled ? "greenBright" : "white"}>
+              <Widget focused={cur === i} width={CARD_WIDTH} minHeight={4} color={p.enabled ? "green" : UI.border}>
+                <Text bold color={p.enabled ? "greenBright" : undefined}>
                   {`${p.enabled ? "✓" : "○"} ${t(p.title)}`}
                 </Text>
-                <Text color="gray" wrap="truncate">{t(p.description)}</Text>
+                <Text color={UI.muted} wrap="truncate">{t(p.description)}</Text>
               </Widget>
             );
           }}

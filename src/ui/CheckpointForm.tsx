@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Box, Text } from "ink";
 import type { Service, Creds } from "../core/services.ts";
 import { TextInput } from "./TextInput.tsx";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 export function CheckpointConnectForm({
@@ -24,7 +25,7 @@ export function CheckpointConnectForm({
       <Text bold color="green">
         {t("🔐 Connect {name}", { name: service.name })}
       </Text>
-      <Text color="gray">{t("Sign in with your corporate credentials and OTP.")}</Text>
+      <Text color={UI.muted}>{t("Sign in with your corporate credentials and OTP.")}</Text>
       <Box marginTop={1}>
         {step === "user" ? (
           <TextInput

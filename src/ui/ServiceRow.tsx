@@ -10,6 +10,7 @@ import { getInterfaceIpAsync } from "../core/ip.ts";
 import { interfaceTraffic, type TunnelTraffic } from "../core/tunnels.ts";
 import { useGeo, PingBadge } from "./Ping.tsx";
 import { Widget } from "./Widget.tsx";
+import { UI } from "./theme.ts";
 import { flagEmoji, humanBytes, humanRate } from "./format.ts";
 
 function useServicePing(s: Service, exitIp: string | null): { ms: number | null; loading: boolean } {
@@ -122,10 +123,10 @@ export function ServiceRow({ service, focused, width, minHeight, badge, subtitle
 
   const up = service.status === "up";
   const connecting = service.status === "connecting";
-  const statusColor = up ? "green" : connecting ? "yellow" : "gray";
+  const statusColor = up ? "green" : connecting ? "yellow" : UI.muted;
   // Full tunnels keep their class color on the border so they read as "tunnel"
   // even at rest; focus brightens it; status tints xray/idle cards.
-  const restColor = badge ? badge.color : up ? "green" : connecting ? "yellow" : "gray";
+  const restColor = badge ? badge.color : up ? "green" : connecting ? "yellow" : UI.border;
   const ipText = exitIp || service.host || service.gateway || "";
 
   return (
@@ -144,33 +145,33 @@ export function ServiceRow({ service, focused, width, minHeight, badge, subtitle
             <Text color={statusColor}>● </Text>
           )}
           {countryCode ? <Text>{flagEmoji(countryCode)} </Text> : null}
-          <Text bold color={up ? "white" : "gray"} wrap="truncate">
+          <Text bold color={up ? undefined : UI.muted} wrap="truncate">
             {service.name}
           </Text>
           {service.active ? <Text color="yellow"> ★</Text> : null}
         </Box>
-        {subtitle ? <Text color="gray" wrap="truncate">{subtitle}</Text> : null}
+        {subtitle ? <Text color={UI.muted} wrap="truncate">{subtitle}</Text> : null}
         {ipText ? (
           <Box>
-            <Text color="gray" wrap="truncate">{ipText}</Text>
+            <Text color={UI.muted} wrap="truncate">{ipText}</Text>
             <Text>
               {"   "}
               <PingBadge {...ping} />
             </Text>
-            {service.note ? <Text color="gray" wrap="truncate">{`   ${service.note}`}</Text> : null}
+            {service.note ? <Text color={UI.muted} wrap="truncate">{`   ${service.note}`}</Text> : null}
           </Box>
         ) : service.note ? (
-          <Text color="gray" wrap="truncate">{service.note}</Text>
+          <Text color={UI.muted} wrap="truncate">{service.note}</Text>
         ) : null}
         {up && traffic.total ? (
           <>
             <Box>
               <Text color="green" wrap="truncate">{`↑ ${humanBytes(traffic.total.up)} `}</Text>
-              <Text color="gray" wrap="truncate">{`(${humanRate(traffic.rate.up)})`}</Text>
+              <Text color={UI.muted} wrap="truncate">{`(${humanRate(traffic.rate.up)})`}</Text>
             </Box>
             <Box>
               <Text color="cyan" wrap="truncate">{`↓ ${humanBytes(traffic.total.down)} `}</Text>
-              <Text color="gray" wrap="truncate">{`(${humanRate(traffic.rate.down)})`}</Text>
+              <Text color={UI.muted} wrap="truncate">{`(${humanRate(traffic.rate.down)})`}</Text>
             </Box>
           </>
         ) : null}

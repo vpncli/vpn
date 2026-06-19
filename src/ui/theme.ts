@@ -26,6 +26,15 @@ export const c = {
 /** The brand gradient palette (cyan → magenta), reused by Ink's <Gradient>. */
 export const BRAND_GRADIENT = ["#00c6ff", "#7b5cff", "#ff4ecd"];
 
+/** Ink UI палитра. ANSI accent-имена (cyan/green/red/…) уже адаптируются под
+ *  палитру терминала. Исключения — `gray` и `white`: Solarized переопределяет их
+ *  под фоновые тона, и текст сливается. Эти нейтральные RGB-тона остаются
+ *  читаемыми и на тёмном, и на светлом фоне. */
+export const UI = {
+  muted: "#70798a", // второстепенный текст (вместо color="gray")
+  border: "#5c6675", // рамки в покое (вместо borderColor="gray")
+};
+
 export const icon = {
   ok: () => c.green("✔"),
   err: () => c.red("✖"),

@@ -6,12 +6,13 @@ import type { ServerProfile } from "../core/types.ts";
 import { PingBadge, useGeo, usePing } from "./Ping.tsx";
 import { arrowDir } from "./grid.ts";
 import { flagEmoji } from "./format.ts";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 function ServerCard({ s, active, focused }: { s: ServerProfile; active: boolean; focused: boolean }): React.JSX.Element {
   const ping = usePing(s.address, s.port);
   const geo = useGeo(s.address);
-  const borderColor = focused ? "cyanBright" : active ? "yellow" : "gray";
+  const borderColor = focused ? "cyanBright" : active ? "yellow" : UI.border;
   return (
     <Box flexDirection="column" borderStyle={focused ? "double" : "round"} borderColor={borderColor} paddingX={1}>
       <Box>
@@ -19,17 +20,17 @@ function ServerCard({ s, active, focused }: { s: ServerProfile; active: boolean;
         <Text bold color={focused ? "cyan" : undefined}>
           {s.name}
         </Text>
-        {geo ? <Text color="gray">{`  ${geo.country}`}</Text> : null}
+        {geo ? <Text color={UI.muted}>{`  ${geo.country}`}</Text> : null}
         {active ? <Text color="yellow"> {t("★ active")}</Text> : null}
       </Box>
       <Box>
         <Box width={22}>
-          <Text color="gray">
+          <Text color={UI.muted}>
             {s.address}:{s.port}
           </Text>
         </Box>
         <Box width={16}>
-          <Text color="gray">
+          <Text color={UI.muted}>
             {s.security}/{s.network}
           </Text>
         </Box>
@@ -67,13 +68,13 @@ export function ServerCards({
         {t("Servers")}
       </Text>
       <Box>
-        <Text color={i === 0 ? "cyan" : "gray"}>{i === 0 ? "❯ " : "  "}</Text>
+        <Text color={i === 0 ? "cyan" : UI.muted}>{i === 0 ? "❯ " : "  "}</Text>
         <Text bold={i === 0}>{t("+ Add server or subscription")}</Text>
       </Box>
       {servers.map((s, idx) => (
         <ServerCard key={s.name} s={s} active={s.name === activeName} focused={i === idx + 1} />
       ))}
-      <Text color="gray">  {t("↑↓/ws move · Enter open · q/Esc back")}</Text>
+      <Text color={UI.muted}>  {t("↑↓/ws move · Enter open · q/Esc back")}</Text>
     </Box>
   );
 }

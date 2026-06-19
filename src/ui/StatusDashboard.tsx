@@ -7,6 +7,7 @@ import type { StatusLine } from "../os/index.ts";
 import { statusLines } from "../core/lifecycle.ts";
 import { isRunning } from "../core/xray.ts";
 import { getRealIpAsync, getVpnIpAsync } from "../core/ip.ts";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 function Row({ line }: { line: StatusLine }): React.JSX.Element {
@@ -16,7 +17,7 @@ function Row({ line }: { line: StatusLine }): React.JSX.Element {
       <Box width={22}>
         <Text>{t(line.label)}</Text>
       </Box>
-      <Text color={line.ok ? "white" : "gray"}>{line.value ?? (line.ok ? "ok" : "—")}</Text>
+      <Text color={line.ok ? undefined : UI.muted}>{line.value ?? (line.ok ? "ok" : "—")}</Text>
     </Box>
   );
 }
@@ -32,7 +33,7 @@ function IpRow({ label, ip, loading, color }: { label: string; ip: string | null
           <Spinner type="dots" /> {t("probing…")}
         </Text>
       ) : (
-        <Text color={ip ? color : "gray"}>{ip ?? t("unavailable")}</Text>
+        <Text color={ip ? color : UI.muted}>{ip ?? t("unavailable")}</Text>
       )}
     </Box>
   );
@@ -77,7 +78,7 @@ export function StatusDashboard({ onDone }: { onDone?: () => void }): React.JSX.
         {running ? (
           <IpRow label="🌍 VPN IP" ip={vpnIp} loading={loadingVpn} color="green" />
         ) : (
-          <Text color="gray">🌍 VPN IP            ({t("xray stopped")})</Text>
+          <Text color={UI.muted}>🌍 VPN IP            ({t("xray stopped")})</Text>
         )}
       </Box>
     </Box>

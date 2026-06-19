@@ -6,6 +6,7 @@ import { listPresets } from "../core/presets.ts";
 import { readList } from "../core/routes.ts";
 import type { RouteTarget } from "../core/types.ts";
 import { Widget } from "./Widget.tsx";
+import { UI } from "./theme.ts";
 import { t } from "../core/i18n.ts";
 
 /** One target's rules, listed in a column under a colored header. */
@@ -17,10 +18,10 @@ function RuleBlock({ label, color, target }: { label: string; color: string; tar
         {`${label} (${rules.length})`}
       </Text>
       {rules.length === 0 ? (
-        <Text color="gray">{"  —"}</Text>
+        <Text color={UI.muted}>{"  —"}</Text>
       ) : (
         rules.map((r, i) => (
-          <Text key={i} color="gray" wrap="truncate">
+          <Text key={i} color={UI.muted} wrap="truncate">
             {`  ${r}`}
           </Text>
         ))
@@ -41,7 +42,7 @@ export function RoutesSummary({ width, focused }: { width?: number; focused?: bo
           {t("presets")}
         </Text>
         {enabled.length === 0 ? (
-          <Text color="gray">{"  —"}</Text>
+          <Text color={UI.muted}>{"  —"}</Text>
         ) : (
           enabled.map((p) => (
             <Text key={p.name} color="greenBright" wrap="truncate">

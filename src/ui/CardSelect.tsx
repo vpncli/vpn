@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Box, Text } from "ink";
 import { Widget } from "./Widget.tsx";
+import { UI } from "./theme.ts";
 import { CardGrid } from "./CardGrid.tsx";
 import { BottomHint } from "./Hint.tsx";
 import { CARD_WIDTH, useCardNav } from "./grid.ts";
@@ -71,16 +72,16 @@ export function CardSelect<T>({
           columns={cols}
           render={(i) => {
             const it = items[i]!;
-            const color = it.color ?? (multi && checked[i] ? "green" : "gray");
+            const color = it.color ?? (multi && checked[i] ? "green" : UI.border);
             return (
               <Widget focused={cur === i} width={CARD_WIDTH} minHeight={minHeight} color={color}>
                 <Box>
-                  {multi ? <Text color={checked[i] ? "greenBright" : "gray"}>{checked[i] ? "✓ " : "○ "}</Text> : null}
+                  {multi ? <Text color={checked[i] ? "greenBright" : UI.muted}>{checked[i] ? "✓ " : "○ "}</Text> : null}
                   <Text bold wrap="truncate">{it.label}</Text>
                   {it.badge ? <Text color="yellow">{` ${it.badge}`}</Text> : null}
                 </Box>
                 {it.description ? (
-                  <Text color="gray" wrap="truncate">
+                  <Text color={UI.muted} wrap="truncate">
                     {it.description}
                   </Text>
                 ) : null}

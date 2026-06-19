@@ -2,12 +2,13 @@
 
 import React from "react";
 import { Box, Text } from "ink";
+import { UI } from "./theme.ts";
 
 export function Widget({
   focused = false,
   width,
   minHeight,
-  color = "gray",
+  color = UI.border,
   focusColor = "cyanBright",
   paddingX = 1,
   children,

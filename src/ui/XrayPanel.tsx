@@ -19,6 +19,7 @@ import { pingColor } from "./Ping.tsx";
 import { ServiceRow } from "./ServiceRow.tsx";
 import { RoutesSummary } from "./RoutesSummary.tsx";
 import { Widget } from "./Widget.tsx";
+import { UI } from "./theme.ts";
 import { Button } from "./Button.tsx";
 import { BottomHint } from "./Hint.tsx";
 import { CardGrid } from "./CardGrid.tsx";
@@ -55,7 +56,7 @@ function IpHeader(): React.JSX.Element {
         <Spinner type="dots" /> {t("probing…")}
       </Text>
     ) : (
-      <Text color={ip ? color : "gray"}>{ip ?? t("unavailable")}</Text>
+      <Text color={ip ? color : UI.muted}>{ip ?? t("unavailable")}</Text>
     );
 
   return (
@@ -70,7 +71,7 @@ function IpHeader(): React.JSX.Element {
         <Box width={18}>
           <Text>🌍 VPN IP</Text>
         </Box>
-        {running ? value(vpn, loadingVpn, "green") : <Text color="gray">({t("xray stopped")})</Text>}
+        {running ? value(vpn, loadingVpn, "green") : <Text color={UI.muted}>({t("xray stopped")})</Text>}
       </Box>
     </Box>
   );
@@ -115,17 +116,17 @@ function SubBlock({ sub, active, focused }: { sub: { name: string; items: Servic
   return (
     <Widget focused={focused} width={WIDTH} minHeight={6} color="cyan">
       <Text bold color="cyan">{`📡 ${sub.name}`}</Text>
-      <Text color="gray">{`${sub.items.length} ${t("servers")}`}</Text>
+      <Text color={UI.muted}>{`${sub.items.length} ${t("servers")}`}</Text>
       {flags.length ? <Text wrap="truncate">{flags.slice(0, MAX_SUB_FLAGS).join(" ")}{flags.length > MAX_SUB_FLAGS ? " …" : ""}</Text> : null}
       {range ? (
         <Box>
-          <Text color="gray">{`${t("ping")} `}</Text>
+          <Text color={UI.muted}>{`${t("ping")} `}</Text>
           <Text color={pingColor(range.min)}>{`${range.min}`}</Text>
-          <Text color="gray">{" – "}</Text>
+          <Text color={UI.muted}>{" – "}</Text>
           <Text color={pingColor(range.max)}>{`${range.max} ms`}</Text>
         </Box>
       ) : (
-        <Text color="gray">{t("pinging…")}</Text>
+        <Text color={UI.muted}>{t("pinging…")}</Text>
       )}
       {activeHere ? <Text color="green" wrap="truncate">{`● ${activeHere.name}`}</Text> : null}
     </Widget>

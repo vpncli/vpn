@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Text } from "ink";
 import Gradient from "ink-gradient";
-import { BRAND_GRADIENT } from "./theme.ts";
+import { BRAND_GRADIENT, UI } from "./theme.ts";
 import { useTerminalWidth } from "./grid.ts";
 import { t } from "../core/i18n.ts";
 import pkg from "../../package.json";
@@ -59,7 +59,7 @@ export function Banner({ subtitle }: { subtitle?: string }): React.JSX.Element {
           <Text dimColor>{`  v${VERSION}`}</Text>
         </Box>
         <Box marginTop={1} flexDirection="column">
-          <Text color="gray">{subtitle ?? t("manage every VPN from your terminal")}</Text>
+          <Text color={UI.muted}>{subtitle ?? t("manage every VPN from your terminal")}</Text>
           <Box marginTop={1} flexDirection="column">
             <Text>
               <Text color="cyan">🌐 </Text>
@@ -67,7 +67,7 @@ export function Banner({ subtitle }: { subtitle?: string }): React.JSX.Element {
             </Text>
             <Text>
               <Text>📧 </Text>
-              <Text color="gray">{SUPPORT_EMAIL}</Text>
+              <Text color={UI.muted}>{SUPPORT_EMAIL}</Text>
             </Text>
           </Box>
         </Box>

@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, render, Text } from "ink";
 import { Banner } from "./Banner.tsx";
-import { c } from "./theme.ts";
+import { c, UI } from "./theme.ts";
 
 interface HelpItem {
   usage: string;
@@ -101,7 +101,7 @@ function Section({ section }: { section: HelpSection }): React.JSX.Element {
           <Box width={USAGE_WIDTH}>
             <Text color={section.accent}>{item.usage}</Text>
           </Box>
-          <Text color="gray">{item.desc}</Text>
+          <Text color={UI.muted}>{item.desc}</Text>
         </Box>
       ))}
     </Box>
@@ -115,7 +115,7 @@ function HelpScreen(): React.JSX.Element {
 
       <Box marginBottom={1}>
         <Text color="yellow">⚡ Quick start  </Text>
-        <Text color="gray">{QUICK_START.map((q) => `$ ${q}`).join("   ")}</Text>
+        <Text color={UI.muted}>{QUICK_START.map((q) => `$ ${q}`).join("   ")}</Text>
       </Box>
 
       {HELP_SECTIONS.map((section, i) => (
@@ -123,7 +123,7 @@ function HelpScreen(): React.JSX.Element {
       ))}
 
       <Box marginTop={1} alignSelf="flex-start">
-        <Text color="gray">
+        <Text color={UI.muted}>
           Rules: <Text dimColor>{RULES_HINT}</Text>
         </Text>
       </Box>
