@@ -1,28 +1,28 @@
 Origin: vpn
 Label: vpn
 Codename: stable
-Date: Sat, 13 Jun 2026 22:53:18 UTC
+Date: Fri, 19 Jun 2026 18:17:57 UTC
 Architectures: amd64 arm64
 Components: main
 Description: vpn APT repository
 MD5Sum:
- 7f3844535683cadc78a31b566f3eed64 698 main/binary-amd64/Packages
- 90e43d6baae82dd49495013954fcbd05 499 main/binary-amd64/Packages.gz
+ e5d24ca3333f2340eb90a206c1f6de3a 698 main/binary-amd64/Packages
+ 318622d40802b9b30ea2b1ec6611fb55 501 main/binary-amd64/Packages.gz
  4dea5737b7c4b6f9f354c61c8882b39e 91 main/binary-amd64/Release
- 54ab6d8e534c7e1dc1ef4a4924e8d1c7 698 main/binary-arm64/Packages
- a030e935474d042dd51a613ac30127bd 498 main/binary-arm64/Packages.gz
+ c46e9846b290b65f9b33fc9937e70358 698 main/binary-arm64/Packages
+ 5011c244092620e93b21cfb3ab8362da 500 main/binary-arm64/Packages.gz
  3bb14b02b7a03917508ac099616bf394 91 main/binary-arm64/Release
 SHA1:
- bd44f9cb27e695104b041a1863c93885ac4b8fba 698 main/binary-amd64/Packages
- 0c98a6eef9112e6c82427758ceb74902bb2c3cd0 499 main/binary-amd64/Packages.gz
+ b8ee619486fc7198e1a4afd3519ab30e1ae3431d 698 main/binary-amd64/Packages
+ f43ba196474066b80afd3c187f6fac67fbe84713 501 main/binary-amd64/Packages.gz
  d5c0a4a53749f43a0837b5d8d5eceb9c1060ca86 91 main/binary-amd64/Release
- 000ca33e4c3d53eb5598dcfd1354951125ba2c19 698 main/binary-arm64/Packages
- 088ae23e7483b815a93fea384c9cda1430a90b41 498 main/binary-arm64/Packages.gz
+ 4488d11a044039204bd85d0d83573fdca7cb14dd 698 main/binary-arm64/Packages
+ 60246589b1995b4076475e634a853d7651146ee8 500 main/binary-arm64/Packages.gz
  0c4a83b58715a1bf716f2ee65c48e203fe70507c 91 main/binary-arm64/Release
 SHA256:
- b40451539c3cb5fda22738b99928f1ac2b3926f9fe2d8cf10c6bbadfa38dbc6b 698 main/binary-amd64/Packages
- ed958a728c8aabdff9355c01e0a46cf169fdd627ce0e7f2d681560af649fad5f 499 main/binary-amd64/Packages.gz
+ 7ae1510da8603bc8e9e47af94582e7d15d5aa5e6d29d5045bc71c113efc1f2a0 698 main/binary-amd64/Packages
+ 69f4a104785f54e7a92964c1c11e5865f09feeadec57cf76b1ccd73855e7ae5c 501 main/binary-amd64/Packages.gz
  492ea16d680435b2ad89f7bf743e46f7e3046004c9ce277ed995a04a280ee818 91 main/binary-amd64/Release
- 4d5a21640b85620b0c0f42dcb281c066081608ddd665940b9dbb96f3a2f87a53 698 main/binary-arm64/Packages
- 772965dd925c1bb1c2f9e4aaf968aac8e0f6343db15afb3d6945f361501c98eb 498 main/binary-arm64/Packages.gz
+ 282481295e824d46e82fd2c388daaaf108a44f10dff44385dc98c4bca7bb0e93 698 main/binary-arm64/Packages
+ d3ef10cdef8e9f09bd86cba049bf9b1fe09e77feed8cb69d1c5886c3f5b23290 500 main/binary-arm64/Packages.gz
  644e8c9a50756af058ef16e8bc92427ca471ad8d56f189c36789a1342620a049 91 main/binary-arm64/Release

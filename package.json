@@ -1,6 +1,6 @@
 {
   "name": "vpn",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "vpncli — manage every VPN from your terminal",
   "type": "module",
   "bin": {
